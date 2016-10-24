@@ -1,0 +1,30 @@
+PODS:
+  - AeroGearHttp (0.8.0)
+  - AeroGearOAuth2 (0.8.0):
+    - AeroGearHttp (= 0.8.0)
+  - Alamofire (3.5.1)
+  - OAuthSwift (0.5.2)
+  - SwiftyJSON (3.1.1)
+  - XCDYouTubeKit (2.5.3)
+  - XCGLogger (3.6.0)
+
+DEPENDENCIES:
+  - AeroGearOAuth2
+  - Alamofire (~> 3.4)
+  - OAuthSwift (~> 0.5.0)
+  - SwiftyJSON
+  - XCDYouTubeKit (~> 2.5)
+  - XCGLogger (~> 3.3)
+
+SPEC CHECKSUMS:
+  AeroGearHttp: 2f9bb955fac911c593fffe0aa0400db6fda79244
+  AeroGearOAuth2: 2fa386b2183e9ee902bb9ad6ce854a43b248ab83
+  Alamofire: 0dfba1184a543e2aa160f4e39cac4e8aba48d223
+  OAuthSwift: 1ef042d4362e755e24a78f158d817245641a5d24
+  SwiftyJSON: f0be2e604f83e8405a624e9f891898bf6ed4e019
+  XCDYouTubeKit: 90690f9e3523735dc93b8024269d991b0cfffe78
+  XCGLogger: 53a3efe22e228e8b25ed8184bc074c2b06d48490
+
+PODFILE CHECKSUM: b2c504d9b0b8527a38dbfe5f5cfcbf4a02b5082c
+
+COCOAPODS: 1.1.0.rc.2
