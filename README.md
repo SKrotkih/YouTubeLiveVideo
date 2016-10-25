@@ -21,4 +21,12 @@ Replace bundle identifier. Edit plist.info in URLs types. Change bundle id in UR
 Hope my work will help you to understand how works YouTube Live Streaming.
 I used this approach in my project.
 
+Was used Camera and Microphone streaming library via RTMP, HLS for iOS, macOS lf.framework https://github.com/shogo4405/lf.swift,
+Alamofire,
+AeroGear,
+OAuthSwift,
+SwiftyJSON.
+
+Some video how it works: https://youtu.be/HwYbvUU2fJo
+
 25-10-2016
