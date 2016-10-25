@@ -21,3 +21,4 @@ Replace bundle identifier. Edit plist.info in URLs types. Change bundle id in UR
 Hope my work will help you to understand how works YouTube Live Streaming.
 I used this approach in my project.
 
+25-10-2016
