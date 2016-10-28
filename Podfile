@@ -9,5 +9,6 @@ pod "XCDYouTubeKit", "~> 2.5"
 pod 'OAuthSwift', '~> 0.5.0'
 pod 'AeroGearOAuth2'
 pod 'XCGLogger', '~> 3.3'
+pod "Moya"
 
 end

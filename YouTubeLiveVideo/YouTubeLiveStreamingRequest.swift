@@ -23,10 +23,10 @@ class YouTubeLiveStreamingRequest: NSObject {
    // Developer console
    // https://console.developers.google.com/apis
    // TODO: Change Client Id on yours:
-   let kGoogleClientId = "<CLIENT ID>.apps.googleusercontent.com"
+   let kGoogleClientId = "495403403209-heee4af4qefp6ujvi216ar5rockjnr6l.apps.googleusercontent.com"
    
    // TODO: Change API key on yours:
-   let kAPIkey = "<API KEY>"
+   let kAPIkey = "AIzaSyCBZOl0Zo__JUPVnmf3ZhIL9g6V9vzWzKE"
    // This API key can be used in this project and with any API that supports it.
    // To use this key in your application, pass it with the key=API_KEY parameter.
 
@@ -76,89 +76,81 @@ extension YouTubeLiveStreamingRequest {
    // upcoming – Return broadcasts that have not yet started.
    
    func listBroadcasts(status: String, completed: (LiveBroadcastListModel?) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
-            let url = "https://www.googleapis.com/youtube/v3/liveBroadcasts"
-            Alamofire.request(.GET, url, headers: headers,
-               parameters: [
-                  "part":"id,snippet,contentDetails,status",
-                  "broadcastStatus":status,
-                  "maxResults":50,
-                  "key":self.kAPIkey
-               ],
-               encoding: .URLEncodedInURL).response(completionHandler: {
-                  (request, response, data, error) in
-                  if let error = error {
-                     Alert.sharedInstance.showOk("System error", message: error.localizedDescription)
-                     completed(nil)
-                  } else {
-                     let json = JSON(data: data!)
-                     let error = json["error"]
-                     let message = error["message"].stringValue
-                     if message.characters.count > 0 {
-                        Alert.sharedInstance.showOk("Failed to get broadcast info", message: message)
-                        completed(nil)
-                     } else {
-                        //print(json)
-                        let broadcastList = LiveBroadcastListModel.decode(json)
-                        let totalResults = broadcastList.pageInfo.totalResults
-                        let resultsPerPage = broadcastList.pageInfo.resultsPerPage
-                        
-                        print("Broadcasts total count = \(totalResults)")
-                        
-                        if totalResults > resultsPerPage {
-                           print("Need to read next page!")  // TODO: In this case you should send request with pageToken=nextPageToken or pageToken=prevPageToken parameter 
-                        }
-                        
-                        completed(broadcastList)
-                     }
-                  }
-               })
+      let parameters: [String: AnyObject] = [
+      "part": "id,snippet,contentDetails,status",
+      "broadcastStatus": status,
+      "maxResults": 50,
+      "key": self.kAPIkey
+      ]
+      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.ListBroadcasts(parameters), completion: { result in
+         switch result {
+         case let .Success(response):
+            let json = JSON(data: response.data)
+            let error = json["error"]
+            let message = error["message"].stringValue
+            if message.characters.count > 0 {
+               Alert.sharedInstance.showOk("Failed to get broadcast info", message: message)
+               completed(nil)
+            } else {
+               //print(json)
+               let broadcastList = LiveBroadcastListModel.decode(json)
+               let totalResults = broadcastList.pageInfo.totalResults
+               let resultsPerPage = broadcastList.pageInfo.resultsPerPage
+               
+               print("Broadcasts total count = \(totalResults)")
+               
+               if totalResults > resultsPerPage {
+                  print("Need to read next page!")  // TODO: In this case you should send request with pageToken=nextPageToken or pageToken=prevPageToken parameter
+               }
+               
+               completed(broadcastList)
+            }
+         case let .Failure(error):
+            guard let error = error as? CustomStringConvertible else {
+               break
+            }
+            let sferror: SFError = .NetworkError(message: error.description)
+            print(sferror)
+            completed(nil)
          }
-      }
+      })
    }
    
    func getLiveBroadcast(broadcastId broadcastId: String, completed: (LiveBroadcastStreamModel?) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-            Alamofire.request(.GET,
-               "https://www.googleapis.com/youtube/v3/liveBroadcasts",
-               headers: merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields()),
-               parameters: [
-                  "part":"id,snippet,contentDetails,status",
-                  "id":broadcastId,
-                  "key":self.kAPIkey
-               ],
-               encoding: .URLEncodedInURL).response(completionHandler: {
-                  (request, response, data, error) in
-                  if let error = error {
-                     Alert.sharedInstance.showOk("Системная ошибка", message: error.localizedDescription)
-                     completed(nil)
-                  } else {
-                     let json = JSON(data: data!)
-                     let error = json["error"]
-                     let message = error["message"].stringValue
-                     if message.characters.count > 0 {
-                        Alert.sharedInstance.showOk("Error while request broadcast list", message: message)
-                        completed(nil)
-                     } else {
-                        //print(json)
-                        let broadcastList = LiveBroadcastListModel.decode(json)
-                        let items = broadcastList.items
-                        var broadcast: LiveBroadcastStreamModel?
-                        for item in items {
-                           if item.id == broadcastId {
-                              broadcast = item
-                              break
-                           }
-                        }
-                        completed(broadcast)
-                     }
+      let parameters: [String: AnyObject] = [
+         "part":"id,snippet,contentDetails,status",
+         "id":broadcastId,
+         "key":self.kAPIkey
+      ]
+      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.LiveBroadcast(parameters), completion: { result in
+         switch result {
+         case let .Success(response):
+            let json = JSON(data: response.data)
+            let error = json["error"]
+            let message = error["message"].stringValue
+            if message.characters.count > 0 {
+               Alert.sharedInstance.showOk("Error while request broadcast list", message: message)
+               completed(nil)
+            } else {
+               //print(json)
+               let broadcastList = LiveBroadcastListModel.decode(json)
+               let items = broadcastList.items
+               var broadcast: LiveBroadcastStreamModel?
+               for item in items {
+                  if item.id == broadcastId {
+                     broadcast = item
+                     break
                   }
-               })
+               }
+               completed(broadcast)
+            }
+         case let .Failure(error):
+            if let error = error as? CustomStringConvertible {
+               Alert.sharedInstance.showOk("Системная ошибка", message: error.description)
+            }
+            completed(nil)
          }
-      }
+      })
    }
    
    // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts/insert
@@ -366,47 +358,40 @@ extension YouTubeLiveStreamingRequest {
    // Returns a list of video streams that match the API request parameters.
    // https://developers.google.com/youtube/v3/live/docs/liveStreams/list
    func getLiveStream(liveStreamId: String, completed: (LiveStreamModel?) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
-            let url = "https://www.googleapis.com/youtube/v3/liveStreams"
-            Alamofire.request(.GET,
-               url,
-               headers: headers,
-               parameters: [
-                  "part":"id,snippet,cdn,status",
-                  "id":liveStreamId,
-                  "key":self.kAPIkey
-               ],
-               encoding: .URLEncodedInURL).response(completionHandler: {
-                  (request, response, data, error) in
-                  if let error = error {
-                     Alert.sharedInstance.showOk("System error", message: error.localizedDescription)
-                     completed(nil)
-                  } else {
-                     let json = JSON(data: data!)
-                     let error = json["error"]
-                     let message = error["message"].stringValue
-                     if message.characters.count > 0 {
-                        Alert.sharedInstance.showOk("Error while Youtube broadcast creating", message: message)
-                        completed(nil)
-                     } else {
-                        //print(json)
-                        let broadcastList = LiveStreamListModel.decode(json)
-                        let items = broadcastList.items
-                        var liveStream: LiveStreamModel?
-                        for item in items {
-                           if item.id == liveStreamId {
-                              liveStream = item
-                              break
-                           }
-                        }
-                        completed(liveStream)
-                     }
+      let parameters: [String: AnyObject] = [
+         "part":"id,snippet,cdn,status",
+         "id":liveStreamId,
+         "key":self.kAPIkey
+      ]
+      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.LiveStream(parameters), completion: { result in
+         switch result {
+         case let .Success(response):
+            let json = JSON(data: response.data)
+            let error = json["error"]
+            let message = error["message"].stringValue
+            if message.characters.count > 0 {
+               Alert.sharedInstance.showOk("Error while Youtube broadcast creating", message: message)
+               completed(nil)
+            } else {
+               //print(json)
+               let broadcastList = LiveStreamListModel.decode(json)
+               let items = broadcastList.items
+               var liveStream: LiveStreamModel?
+               for item in items {
+                  if item.id == liveStreamId {
+                     liveStream = item
+                     break
                   }
-               })
+               }
+               completed(liveStream)
+            }
+         case let .Failure(error):
+            if let error = error as? CustomStringConvertible {
+               Alert.sharedInstance.showOk("Системная ошибка", message: error.description)
+            }
+            completed(nil)
          }
-      }
+      })
    }
    
    // https://developers.google.com/youtube/v3/live/docs/liveStreams/insert

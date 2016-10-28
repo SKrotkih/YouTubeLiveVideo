@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		62F6B577B430D78912B92163 /* Pods_YouTubeLiveVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D49C69C84C0F80F29371978 /* Pods_YouTubeLiveVideo.framework */; };
+		7F0261201DC360BF00C91076 /* YouTubeLiveVideoAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F02611F1DC360BF00C91076 /* YouTubeLiveVideoAPI.swift */; };
+		7F0261221DC3764500C91076 /* Oauth2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0261211DC3764500C91076 /* Oauth2.swift */; };
+		7F0261241DC3AB2300C91076 /* SFError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F0261231DC3AB2300C91076 /* SFError.swift */; };
 		7F10439B1DBDFA78006AA1EE /* Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F10439A1DBDFA78006AA1EE /* Decodable.swift */; };
 		7F1043F01DBDFBCD006AA1EE /* AudioUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F10439F1DBDFBCD006AA1EE /* AudioUtil.swift */; };
 		7F1043F11DBDFBCD006AA1EE /* GLLFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1043A01DBDFBCD006AA1EE /* GLLFView.swift */; };
@@ -84,6 +87,7 @@
 		7F1044441DBE0AA9006AA1EE /* DateConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1044431DBE0AA9006AA1EE /* DateConverter.swift */; };
 		7F1044471DBE2325006AA1EE /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F1044451DBE2325006AA1EE /* FBSDKCoreKit.framework */; };
 		7F1044481DBE2325006AA1EE /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F1044461DBE2325006AA1EE /* FBSDKLoginKit.framework */; };
+		7F3CA1CE1DBF745D006AB040 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 7F3CA1CD1DBF745D006AB040 /* README.md */; };
 		7F83E3371DBDD35500DE4102 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F83E3361DBDD35500DE4102 /* TableViewCell.swift */; };
 		7F83E34C1DBDD49100DE4102 /* YouTubeConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F83E3481DBDD49100DE4102 /* YouTubeConfigurator.swift */; };
 		7F83E34D1DBDD49100DE4102 /* YouTubeLiveStreamingPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F83E3491DBDD49100DE4102 /* YouTubeLiveStreamingPresenter.swift */; };
@@ -106,6 +110,9 @@
 /* Begin PBXFileReference section */
 		1D25A3DFDBD2707F0A23DDB9 /* Pods-YouTubeLiveVideo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeLiveVideo.release.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeLiveVideo/Pods-YouTubeLiveVideo.release.xcconfig"; sourceTree = "<group>"; };
 		2F6AF40A23D40D691D15F9E0 /* Pods-YouTubeLiveVideo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YouTubeLiveVideo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YouTubeLiveVideo/Pods-YouTubeLiveVideo.debug.xcconfig"; sourceTree = "<group>"; };
+		7F02611F1DC360BF00C91076 /* YouTubeLiveVideoAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeLiveVideoAPI.swift; sourceTree = "<group>"; };
+		7F0261211DC3764500C91076 /* Oauth2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Oauth2.swift; sourceTree = "<group>"; };
+		7F0261231DC3AB2300C91076 /* SFError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SFError.swift; sourceTree = "<group>"; };
 		7F10439A1DBDFA78006AA1EE /* Decodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decodable.swift; sourceTree = "<group>"; };
 		7F10439F1DBDFBCD006AA1EE /* AudioUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioUtil.swift; sourceTree = "<group>"; };
 		7F1043A01DBDFBCD006AA1EE /* GLLFView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GLLFView.swift; sourceTree = "<group>"; };
@@ -185,6 +192,7 @@
 		7F1044431DBE0AA9006AA1EE /* DateConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DateConverter.swift; path = Helpers/DateConverter.swift; sourceTree = "<group>"; };
 		7F1044451DBE2325006AA1EE /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = Frameworks/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		7F1044461DBE2325006AA1EE /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = Frameworks/FBSDKLoginKit.framework; sourceTree = "<group>"; };
+		7F3CA1CD1DBF745D006AB040 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		7F83E3361DBDD35500DE4102 /* TableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		7F83E3481DBDD49100DE4102 /* YouTubeConfigurator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeConfigurator.swift; sourceTree = "<group>"; };
 		7F83E3491DBDD49100DE4102 /* YouTubeLiveStreamingPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeLiveStreamingPresenter.swift; sourceTree = "<group>"; };
@@ -413,6 +421,7 @@
 				7F1044401DBE0957006AA1EE /* JsonUtility.h */,
 				7F1044411DBE0957006AA1EE /* JsonUtility.m */,
 				7F1044391DBDFFF3006AA1EE /* StatusBarShowingViewController.swift */,
+				7F0261231DC3AB2300C91076 /* SFError.swift */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -436,6 +445,8 @@
 				7F83E3481DBDD49100DE4102 /* YouTubeConfigurator.swift */,
 				7F83E3491DBDD49100DE4102 /* YouTubeLiveStreamingPresenter.swift */,
 				7F83E34A1DBDD49100DE4102 /* YouTubeLiveStreamingRequest.swift */,
+				7F0261211DC3764500C91076 /* Oauth2.swift */,
+				7F02611F1DC360BF00C91076 /* YouTubeLiveVideoAPI.swift */,
 				7F83E34B1DBDD49100DE4102 /* YouTubeLiveStreamingWorker.swift */,
 			);
 			name = YouTubeLiveStreaming;
@@ -475,6 +486,7 @@
 				7F9274B41DBDCAD00051DE6B /* LaunchScreen.storyboard */,
 				7F10443C1DBE0940006AA1EE /* YouTubeLiveVideo-Bridging-Header.h */,
 				7F9274B71DBDCAD00051DE6B /* Info.plist */,
+				7F3CA1CD1DBF745D006AB040 /* README.md */,
 			);
 			path = YouTubeLiveVideo;
 			sourceTree = "<group>";
@@ -667,16 +679,19 @@
 				7F1043FD1DBDFBCD006AA1EE /* SiwftCore+Extension.swift in Sources */,
 				7F1044101DBDFBCD006AA1EE /* IOComponent.swift in Sources */,
 				7F1044131DBDFBCD006AA1EE /* VideoIOComponent.swift in Sources */,
+				7F0261221DC3764500C91076 /* Oauth2.swift in Sources */,
 				7F83E3581DBDD50100DE4102 /* LiveStreamListModel.swift in Sources */,
 				7F1044251DBDFBCD006AA1EE /* RTPPacket.swift in Sources */,
 				7F1044161DBDFBCD006AA1EE /* NetClient.swift in Sources */,
 				7F83E3571DBDD50100DE4102 /* LiveBroadcastStreamModel.swift in Sources */,
+				7F0261241DC3AB2300C91076 /* SFError.swift in Sources */,
 				7F1043F51DBDFBCD006AA1EE /* VisualEffects.swift in Sources */,
 				7F1043F01DBDFBCD006AA1EE /* AudioUtil.swift in Sources */,
 				7F1043F41DBDFBCD006AA1EE /* VideoStreamViewController.swift in Sources */,
 				7F1044121DBDFBCD006AA1EE /* Stream.swift in Sources */,
 				7F1044211DBDFBCD006AA1EE /* RTMPMuxer.swift in Sources */,
 				7F1044421DBE0957006AA1EE /* JsonUtility.m in Sources */,
+				7F0261201DC360BF00C91076 /* YouTubeLiveVideoAPI.swift in Sources */,
 				7F1043F11DBDFBCD006AA1EE /* GLLFView.swift in Sources */,
 				7F83E34D1DBDD49100DE4102 /* YouTubeLiveStreamingPresenter.swift in Sources */,
 				7F83E3591DBDD50100DE4102 /* LiveStreamModel.swift in Sources */,
@@ -705,6 +720,7 @@
 				7F1044291DBDFBCD006AA1EE /* RTSPResponse.swift in Sources */,
 				7F1044111DBDFBCD006AA1EE /* SoundTransform.swift in Sources */,
 				7F1044341DBDFBCD006AA1EE /* VideoGravityUtil.swift in Sources */,
+				7F3CA1CE1DBF745D006AB040 /* README.md in Sources */,
 				7F10443B1DBDFFF3006AA1EE /* StatusBarShowingViewController.swift in Sources */,
 				7F1044231DBDFBCD006AA1EE /* RTMPSocket.swift in Sources */,
 				7F1043F31DBDFBCD006AA1EE /* ScreenCaptureSession.swift in Sources */,
@@ -831,7 +847,7 @@
 				INFOPLIST_FILE = YouTubeLiveVideo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.skappledev.YouTubeLiveVideo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skappledev.FightNights;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b282cfc9-ff8e-4473-8981-4697d64c28ad";
 				SWIFT_OBJC_BRIDGING_HEADER = "YouTubeLiveVideo/YouTubeLiveVideo-Bridging-Header.h";
@@ -853,7 +869,7 @@
 				INFOPLIST_FILE = YouTubeLiveVideo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.skappledev.YouTubeLiveVideo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.skappledev.FightNights;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b282cfc9-ff8e-4473-8981-4697d64c28ad";
 				SWIFT_OBJC_BRIDGING_HEADER = "YouTubeLiveVideo/YouTubeLiveVideo-Bridging-Header.h";

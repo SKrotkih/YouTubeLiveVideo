@@ -19,12 +19,22 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Moya.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>OAuthSwift.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 		<key>Pods-YouTubeLiveVideo.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Result.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -47,17 +57,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>3D6441A5FC0025EB31589051C8666514</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>45935B91DF0442390E2CA6DEEF68AE99</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>78C33D52F7E2D591E77871DBB03E8468</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>79C040AFDDCE1BCBF6D8B5EB0B85887F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8715B33B9CEC9D42A3483648F8A97CAA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -72,17 +87,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>CE6D181577F35797B652C2AA1C24B9FF</key>
+		<key>BAC7302E844A11BBA2D67FFE3F8951FB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>EDDE65EF1F6F01267C4CAD4A1D81A6CC</key>
+		<key>CA7ED4B5F45950503A01961015B480C2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>FA2A4B05A1FF466AAADFF847EE48BD19</key>
+		<key>D58CAD74411F3EA5D73A48FFB3DC29A5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E4CD33001C9925445B953BB7DDA28D44</key>
 		<dict>
 			<key>primary</key>
 			<true/>
