@@ -23,10 +23,10 @@ class YouTubeLiveStreamingRequest: NSObject {
    // Developer console
    // https://console.developers.google.com/apis
    // TODO: Change Client Id on yours:
-   let kGoogleClientId = "495403403209-heee4af4qefp6ujvi216ar5rockjnr6l.apps.googleusercontent.com"
+   let kGoogleClientId = "<CLIENT ID>.apps.googleusercontent.com"
    
    // TODO: Change API key on yours:
-   let kAPIkey = "AIzaSyCBZOl0Zo__JUPVnmf3ZhIL9g6V9vzWzKE"
+   let kAPIkey = "<API KEY>"
    // This API key can be used in this project and with any API that supports it.
    // To use this key in your application, pass it with the key=API_KEY parameter.
 
@@ -195,115 +195,96 @@ extension YouTubeLiveStreamingRequest {
    // POST https://www.googleapis.com/youtube/v3/liveBroadcasts/transition
    // Changes the status of a YouTube live broadcast and initiates any processes associated with the new status. For example, when you transition a broadcast's status to testing, YouTube starts to transmit video to that broadcast's monitor stream. Before calling this method, you should confirm that the value of the status.streamStatus property for the stream bound to your broadcast is active.
    func transitionLiveBroadcast(boadcastId: String, broadcastStatus: String, completed: (LiveBroadcastStreamModel?) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
-            let url = "https://www.googleapis.com/youtube/v3/liveBroadcasts/transition"
-            Alamofire.request(.POST,
-               url,
-               headers: headers,
-               parameters: [
-                  "id":boadcastId,
-                  "broadcastStatus":broadcastStatus,
-                  "part":"id,snippet,contentDetails,status",
-                  "key":self.kAPIkey
-               ],
-               encoding: .URLEncodedInURL).response(completionHandler: {
-                  (request, response, data, error) in
-                  if let error = error {
-                     Alert.sharedInstance.showOk("System error", message: error.localizedDescription)
-                     completed(nil)
-                  } else {
-                     let json = JSON(data: data!)
-                     let error = json["error"]
-                     let message = error["message"].stringValue
-                     if message.characters.count > 0 {
-                        print("FAILED TRANSITION TO THE \(broadcastStatus) STATUS [\(message)]!")
-                        //Alert.sharedInstance.showOk("Error while Youtube broadcast transition", message: message)
-                        completed(nil)
-                     } else {
-                        print(json)
-                        let liveBroadcast = LiveBroadcastStreamModel.decode(json)
-                        completed(liveBroadcast)
-                     }
-                  }
-               })
+      
+      let parameters: [String: AnyObject] = [
+         "id":boadcastId,
+         "broadcastStatus":broadcastStatus,
+         "part":"id,snippet,contentDetails,status",
+         "key":self.kAPIkey
+      ]
+      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.TransitionLiveBroadcast(parameters), completion: { result in
+         switch result {
+         case let .Success(response):
+            let json = JSON(data: response.data)
+            let error = json["error"]
+            let message = error["message"].stringValue
+            if message.characters.count > 0 {
+               print("FAILED TRANSITION TO THE \(broadcastStatus) STATUS [\(message)]!")
+               //Alert.sharedInstance.showOk("Error while Youtube broadcast transition", message: message)
+               completed(nil)
+            } else {
+               print(json)
+               let liveBroadcast = LiveBroadcastStreamModel.decode(json)
+               completed(liveBroadcast)
+            }
+         case let .Failure(error):
+            if let error = error as? CustomStringConvertible {
+               Alert.sharedInstance.showOk("Системная ошибка", message: error.description)
+            }
+            completed(nil)
          }
-      }
+      })
    }
    
    // Deletes a broadcast.
    // DELETE https://www.googleapis.com/youtube/v3/liveBroadcasts
    func deleteLiveBroadcast(broadcastId broadcastId: String, completed: (Bool) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-            Alamofire.request(.DELETE,
-               "https://www.googleapis.com/youtube/v3/liveBroadcasts",
-               headers: merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields()),
-               parameters: [
-                  "id":broadcastId,
-                  "key":self.kAPIkey
-               ],
-               encoding: .URLEncodedInURL).response(completionHandler: {
-                  (request, response, data, error) in
-                  if let theerror = error {
-                     Alert.sharedInstance.showOk("System error", message: theerror.localizedDescription)
-                     completed(false)
-                  } else {
-                     let json = JSON(data: data!)
-                     let error = LiveBroadcastErrorModel.decode(json["error"])
-                     if error.code > 0 {
-                        Alert.sharedInstance.showOk("Failed to delete broadcast", message: error.message!)
-                        completed(false)
-                     } else {
-                        //print("Broadcast deleted: \(json)")
-                        completed(true)
-                     }
-                  }
-               })
+      let parameters: [String: AnyObject] = [
+         "id":broadcastId,
+         "key":self.kAPIkey
+      ]
+      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.DeleteLiveBroadcast(parameters), completion: { result in
+         switch result {
+         case let .Success(response):
+            let json = JSON(data: response.data)
+            let error = LiveBroadcastErrorModel.decode(json["error"])
+            if error.code > 0 {
+               Alert.sharedInstance.showOk("Failed to delete broadcast", message: error.message!)
+               completed(false)
+            } else {
+               //print("Broadcast deleted: \(json)")
+               completed(true)
+            }
+         case let .Failure(error):
+            if let error = error as? CustomStringConvertible {
+               Alert.sharedInstance.showOk("Системная ошибка", message: error.description)
+            }
+            completed(false)
          }
-      }
+      })
    }
    
    // Binds a YouTube broadcast to a stream or removes an existing binding between a broadcast and a stream.
    // A broadcast can only be bound to one video stream, though a video stream may be bound to more than one broadcast.
    // POST https://www.googleapis.com/youtube/v3/liveBroadcasts/bind
    func bindLiveBroadcast(broadcastId broadcastId: String, liveStreamId streamId: String, completed: (LiveBroadcastStreamModel?) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
-            let url = "https://www.googleapis.com/youtube/v3/liveBroadcasts/bind"
-            Alamofire.request(.POST,
-               url,
-               headers:
-               headers,
-               parameters: [
-                  "id":broadcastId,
-                  "streamId":streamId,
-                  "part":"id,snippet,contentDetails,status",
-                  "key":self.kAPIkey
-               ],
-               encoding: .URLEncodedInURL).response(completionHandler: {
-                  (request, response, data, error) in
-                  if let error = error {
-                     Alert.sharedInstance.showOk("System error", message: error.localizedDescription)
-                     completed(nil)
-                  } else {
-                     let json = JSON(data: data!)
-                     let error = json["error"]
-                     let message = error["message"].stringValue
-                     if message.characters.count > 0 {
-                        Alert.sharedInstance.showOk("Error while Youtube broadcast binding with live stream", message: message)
-                        completed(nil)
-                     } else {
-                        //print(json)
-                        let liveBroadcast = LiveBroadcastStreamModel.decode(json)
-                        completed(liveBroadcast)
-                     }
-                  }
-               })
+      let parameters: [String: AnyObject] = [
+         "id":broadcastId,
+         "streamId":streamId,
+         "part":"id,snippet,contentDetails,status",
+         "key":self.kAPIkey
+      ]
+      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.BindLiveBroadcast(parameters), completion: { result in
+         switch result {
+         case let .Success(response):
+            let json = JSON(data: response.data)
+            let error = json["error"]
+            let message = error["message"].stringValue
+            if message.characters.count > 0 {
+               Alert.sharedInstance.showOk("Error while Youtube broadcast binding with live stream", message: message)
+               completed(nil)
+            } else {
+               //print(json)
+               let liveBroadcast = LiveBroadcastStreamModel.decode(json)
+               completed(liveBroadcast)
+            }
+         case let .Failure(error):
+            if let error = error as? CustomStringConvertible {
+               Alert.sharedInstance.showOk("Системная ошибка", message: error.description)
+            }
+            completed(nil)
          }
-      }
+      })
    }
 
    // Updates a broadcast. For example, you could modify the broadcast settings defined in the liveBroadcast resource's contentDetails object.
@@ -464,35 +445,30 @@ extension YouTubeLiveStreamingRequest {
    // Request:
    // DELETE https://www.googleapis.com/youtube/v3/liveStreams
    func deleteLiveStream(liveStreamId: String, completed: (Bool) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-            Alamofire.request(.DELETE,
-               "https://www.googleapis.com/youtube/v3/liveStreams",
-               headers: merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields()),
-               parameters: [
-                  "id":liveStreamId,
-                  "key":self.kAPIkey
-               ],
-               encoding: .URL).response(completionHandler: {
-                  (request, response, data, error) in
-                  if let theerror = error {
-                     Alert.sharedInstance.showOk("System error", message: theerror.localizedDescription)
-                     completed(false)
-                  } else {
-                     let json = JSON(data: data!)
-                     let error = json["error"].stringValue
-                     if error.characters.count > 0 {
-                        let message = json["message"].stringValue
-                        Alert.sharedInstance.showOk(error, message: message)
-                        completed(false)
-                     } else {
-                        print("video stream deleted: \(json)")
-                        completed(true)
-                     }
-                  }
-               })
+      let parameters: [String: AnyObject] = [
+         "id":liveStreamId,
+         "key":self.kAPIkey
+      ]
+      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.DeleteLiveStream(parameters), completion: { result in
+         switch result {
+         case let .Success(response):
+            let json = JSON(data: response.data)
+            let error = json["error"].stringValue
+            if error.characters.count > 0 {
+               let message = json["message"].stringValue
+               Alert.sharedInstance.showOk(error, message: message)
+               completed(false)
+            } else {
+               print("video stream deleted: \(json)")
+               completed(true)
+            }
+         case let .Failure(error):
+            if let error = error as? CustomStringConvertible {
+               Alert.sharedInstance.showOk("Системная ошибка", message: error.description)
+            }
+            completed(false)
          }
-      }
+      })
    }
    
    // Updates a video stream. If the properties that you want to change cannot be updated, then you need to create a new stream with the proper settings.

@@ -43,7 +43,11 @@ let YouTubeLiveVideoProvider = MoyaProvider<YouTubeLiveVideoAPI>(plugins: [Netwo
 public enum YouTubeLiveVideoAPI {
    case ListBroadcasts([String: AnyObject])
    case LiveBroadcast([String: AnyObject])
+   case TransitionLiveBroadcast([String: AnyObject])
+   case DeleteLiveBroadcast([String: AnyObject])
+   case BindLiveBroadcast([String: AnyObject])
    case LiveStream([String: AnyObject])
+   case DeleteLiveStream([String: AnyObject])
 }
 
 extension YouTubeLiveVideoAPI: TargetType {
@@ -55,8 +59,16 @@ extension YouTubeLiveVideoAPI: TargetType {
          return .GET
       case .LiveBroadcast:
          return .GET
+      case .TransitionLiveBroadcast:
+         return .POST
+      case .DeleteLiveBroadcast:
+         return .DELETE
+      case .BindLiveBroadcast:
+         return .POST
       case .LiveStream:
          return .GET
+      case .DeleteLiveStream:
+         return .DELETE
       }
    }
    
@@ -66,8 +78,17 @@ extension YouTubeLiveVideoAPI: TargetType {
          return "/liveBroadcasts"
       case .LiveBroadcast(_):
          return "/liveBroadcasts"
+      case .TransitionLiveBroadcast(_):
+         return "/liveBroadcasts/transition"
+      case .DeleteLiveBroadcast(_):
+         return "/liveBroadcasts"
+      case BindLiveBroadcast(_):
+         return "/liveBroadcasts/bind"
       case .LiveStream(_):
          return "/liveStreams"
+      case DeleteLiveStream(_):
+         return "/liveStreams"
+         
       }
    }
    
@@ -77,8 +98,17 @@ extension YouTubeLiveVideoAPI: TargetType {
          return parameters
       case .LiveBroadcast(let parameters):
          return parameters
+      case .TransitionLiveBroadcast(let parameters):
+         return parameters
+      case .DeleteLiveBroadcast(let parameters):
+         return parameters
+      case BindLiveBroadcast(let parameters):
+         return parameters
       case .LiveStream(let parameters):
          return parameters
+      case DeleteLiveStream(let parameters):
+         return parameters
+         
       }
    }
    
@@ -88,7 +118,15 @@ extension YouTubeLiveVideoAPI: TargetType {
          return NSData()
       case .LiveBroadcast(_):
          return NSData()
+      case .TransitionLiveBroadcast(_):
+         return NSData()
+      case .DeleteLiveBroadcast(_):
+         return NSData()
+      case BindLiveBroadcast(_):
+         return NSData()
       case .LiveStream(_):
+         return NSData()
+      case .DeleteLiveStream(_):
          return NSData()
       }
    }

@@ -15,17 +15,17 @@ Download or clone the repository.
 As you can see I made pod install for you. It is because I had some problems with updating some frameworks (for SwiftyJSON for example). There is now just for Swift above 2.2. So I decided to commit all frameworks for you for having a quick start. After update all frameworks (if you want) you can restore framework SwiftyJSON from the source YouTubeLiveVideo repo. Keep it mind if you will have problem with frameworks, the project builds and works for me. 
 
 
-Then replace my (wrong) API key and Client Id on yours in the YouTubeLiveStreamingRequest.swift.
-Just replace the bundle identifier. Then edit plist.info for the URLs types. Change bundle id for the URL Shemes.
+Then replace my (wrong now) API key and Client Id on yours in the YouTubeLiveStreamingRequest class.
+Replace the bundle identifier. Then edit plist.info for the URLs types. Change bundle id for URL Shemes.
 
-Hope my work will help you to understand how YouTube Live Streaming works.
-
-Here were used Camera and Microphone streaming library via RTMP, HLS for iOS, macOS lf.framework https://github.com/shogo4405/lf.swift,
+Were used follow frameworks:
+lf (Camera and Microphone streaming library via RTMP, HLS for iOS, macOS lf.framework https://github.com/shogo4405/lf.swift),
 Alamofire,
 AeroGear,
 OAuthSwift,
-SwiftyJSON.
+SwiftyJSON,
+Moya
 
-You can watch the movie how it works: https://youtu.be/HwYbvUU2fJo
+Look the movie how it works: https://youtu.be/HwYbvUU2fJo
 
 25-10-2016
