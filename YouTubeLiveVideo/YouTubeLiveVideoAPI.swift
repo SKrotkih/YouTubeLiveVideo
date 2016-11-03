@@ -24,14 +24,14 @@ let BaseURL = "https://www.googleapis.com/youtube/v3"
 
 let requestClosure = { (endpoint: Moya.Endpoint<YouTubeLiveVideoAPI>, done: MoyaProvider<YouTubeLiveVideoAPI>.RequestResultClosure) in
    let request = endpoint.urlRequest.mutableCopy() as! NSMutableURLRequest
-   Oauth2.sharedInstance.request() { token in
+   OAuth2.sharedInstance.request() { token in
       if let token = token {
          request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
          var nserror: NSError! = NSError(domain: "YouTubeLiveVideoAPIHttp", code: 0, userInfo: nil)
          let error = Moya.Error.Underlying(nserror)
          done(Result(request, failWith: error))
       } else {
-         var nserror: NSError! = NSError(domain: "YouTubeLiveVideoAPIHttp", code: 4000, userInfo: ["NSLocalizedDescriptionKey": "Failed Google Oauth2 request token"])
+         var nserror: NSError! = NSError(domain: "YouTubeLiveVideoAPIHttp", code: 4000, userInfo: ["NSLocalizedDescriptionKey": "Failed Google OAuth2 request token"])
          let error = Moya.Error.Underlying(nserror)
          done(Result(request, failWith: error))
       }

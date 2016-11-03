@@ -29,37 +29,6 @@ class YouTubeLiveStreamingRequest: NSObject {
    let kAPIkey = "<API KEY>"
    // This API key can be used in this project and with any API that supports it.
    // To use this key in your application, pass it with the key=API_KEY parameter.
-
-   private var http: Http!
-   private var oauth2Module: OAuth2Module?
-}
-
-// MARK: Google Oauth2
-
-extension YouTubeLiveStreamingRequest {
-
-   private func oauth2(completed: (Bool) -> Void) {
-      if let oauth2Module = self.oauth2Module {
-         if oauth2Module.isAuthorized() {
-            completed(true)
-            return
-         }
-      }
-      let scopes = ["https://www.googleapis.com/auth/youtube"]
-      let googleConfig = GoogleConfig(clientId: kGoogleClientId, scopes: scopes)
-      self.oauth2Module = OAuth2Module(config: googleConfig)
-      http = Http()
-      http.authzModule = oauth2Module
-      self.oauth2Module!.requestAccess { (response:AnyObject?, error:NSError?) -> Void in
-         if let error = error {
-            print("Error: \(error)")
-            completed(false)
-         } else {
-            completed(true)
-         }
-      }
-   }
-   
 }
 
 // MARK: LiveBroatcasts
@@ -156,10 +125,10 @@ extension YouTubeLiveStreamingRequest {
    // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts/insert
    // Creates a broadcast.
    func createLiveBroadcast(title: String, startDateTime: NSDate, completed: (LiveBroadcastStreamModel?) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
+      OAuth2.sharedInstance.request() { token in
+         if let token = token {
             let jsonBody = "{\"snippet\": {\"title\": \"\(title)\",\"scheduledStartTime\": \"\(self.dateToString(startDateTime))\"},\"status\": {\"privacyStatus\":\"public\"}}"
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
+            let headers = merge(["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
             let url = "https://www.googleapis.com/youtube/v3/liveBroadcasts?part=id,snippet,contentDetails,status&key=\(self.kAPIkey)"
             Alamofire.request(.POST, url, headers: headers,
                parameters: [:],
@@ -188,6 +157,8 @@ extension YouTubeLiveStreamingRequest {
                      }
                   }
                })
+         } else {
+            
          }
       }
    }
@@ -291,11 +262,11 @@ extension YouTubeLiveStreamingRequest {
    // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts/update
    // PUT https://www.googleapis.com/youtube/v3/liveBroadcasts
    func updateLiveBroadcast(broadcastId id: String, title: String, format: String, completed: (Bool) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
+      OAuth2.sharedInstance.request() { token in
+         if let token = token {
             let ingestionType = "rtmp" // dash rtmp
             let jsonBody = "{\"id\":\"\(id)\",\"snippet\": {\"title\":\"\(title)\"},\"cdn\":{\"format\":\"\(format)\",\"ingestionType\":\"\(ingestionType)\"}}}"
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
+            let headers = merge(["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
             Alamofire.request(.PUT, "https://www.googleapis.com/youtube/v3/liveBroadcasts?part=\"id,snippet,contentDetails,status\"&key=\(self.kAPIkey)",
                headers: headers,
                parameters: nil,
@@ -323,6 +294,8 @@ extension YouTubeLiveStreamingRequest {
                      }
                   }
                })
+         } else {
+            
          }
       }
    }
@@ -398,15 +371,14 @@ extension YouTubeLiveStreamingRequest {
    //   }
    
    func createLiveStream(title: String, description: String, streamName: String, completed: (LiveStreamModel?) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
-
+      OAuth2.sharedInstance.request() { token in
+         if let token = token {
             let resolution = "720p"    // 1080p 1440p 240p 360p 480p 720p
             let frameRate = "60fps"    // 30fps
             let ingestionType = "rtmp" // dash rtmp
-
+            
             let jsonBody = "{\"snippet\": {\"title\": \"\(title)\",\"description\": \"\(description)\"},\"cdn\": {\"resolution\":\"\(resolution)\",\"frameRate\":\"\(frameRate)\",\"ingestionType\":\"\(ingestionType)\",\"ingestionInfo\":{\"streamName\":\"\(streamName)\"}}}"
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
+            let headers = merge(["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
             let url = "https://www.googleapis.com/youtube/v3/liveStreams?part=id,snippet,cdn,status&key=\(self.kAPIkey)"
             Alamofire.request(.POST,
                url,
@@ -437,6 +409,8 @@ extension YouTubeLiveStreamingRequest {
                      }
                   }
                })
+         } else {
+            
          }
       }
    }
@@ -478,10 +452,10 @@ extension YouTubeLiveStreamingRequest {
    // ingestionType = dash rtmp
    
    func updateLiveStream(liveStreamId: String, title: String, format: String, ingestionType: String, completed: (Bool) -> Void) {
-      self.oauth2() { isLoggedIn in
-         if isLoggedIn {
+      OAuth2.sharedInstance.request() { token in
+         if let token = token {
             let jsonBody = "{\"id\":\"\(liveStreamId)\",\"snippet\": {\"title\":\"\(title)\"},\"cdn\":{\"format\":\"\(format)\",\"ingestionType\":\"\(ingestionType)\"}}}"
-            let headers = merge(["Content-Type": "application/json"], self.http.authzModule!.authorizationFields())
+            let headers = merge(["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
             Alamofire.request(.PUT, "https://www.googleapis.com/youtube/v3/liveStreams", headers: headers,
                parameters: ["part": "id,snippet,cdn,status", "key": self.kAPIkey],
                encoding: .Custom({
@@ -508,6 +482,8 @@ extension YouTubeLiveStreamingRequest {
                      }
                   }
                })
+         } else {
+            
          }
       }
    }

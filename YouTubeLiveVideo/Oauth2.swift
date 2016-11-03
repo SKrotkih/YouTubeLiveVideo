@@ -1,5 +1,5 @@
 //
-//  Oauth2.swift
+//  OAuth2.swift
 //  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/28/16.
@@ -11,7 +11,7 @@ import UIKit
 import AeroGearOAuth2
 import AeroGearHttp
 
-class Oauth2: NSObject {
+class OAuth2: NSObject {
 
    // Developer console
    // https://console.developers.google.com/apis
@@ -19,18 +19,18 @@ class Oauth2: NSObject {
    let kGoogleClientId = "495403403209-heee4af4qefp6ujvi216ar5rockjnr6l.apps.googleusercontent.com"
    
    // access a shared instance
-   class var sharedInstance: Oauth2 {
+   class var sharedInstance: OAuth2 {
       struct Singleton {
-         static let instance = Oauth2()
+         static let instance = OAuth2()
       }
       return Singleton.instance
    }
    
 }
 
-// MARK: Google Oauth2
+// MARK: Google OAuth2
 
-extension Oauth2 {
+extension OAuth2 {
    
    func request(completed: (String?) -> Void) {
       let scopes = ["https://www.googleapis.com/auth/youtube"]
