@@ -34,6 +34,6 @@ As you can see I made pod install for you. It is because I had some problems wit
 - SwiftyJSON
 - Moya
 
-Here the video how it works: https://youtu.be/HwYbvUU2fJo
+Here is a video how it works: https://youtu.be/HwYbvUU2fJo
 
 25-10-2016
