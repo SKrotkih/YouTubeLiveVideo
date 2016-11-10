@@ -1,5 +1,5 @@
 //
-//  YouTubeLiveStreamingWorker.swift
+//  YTLiveStreaming.swift
 //  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/24/16.
@@ -10,13 +10,13 @@ import UIKit
 
 typealias CompletePublishing = (Bool) -> Void
 
-class YouTubeLiveStreamingWorker: NSObject {
-   var youTubeRequest: YouTubeLiveStreamingRequest!
+class YTLiveStreaming: NSObject {
+   var youTubeRequest: LiveStreamingRequest!
    var youTubePresenter: YouTubeLiveStreamingPresenter!
    var completePublishing: CompletePublishing?
 }
 
-extension YouTubeLiveStreamingWorker {
+extension YTLiveStreaming {
    
    func getActiveBroadcasts(_ completed: @escaping ([LiveBroadcastStreamModel]?) -> Void) {
       youTubeRequest.listBroadcasts("active", completed: { broadcasts in
@@ -117,7 +117,7 @@ extension YouTubeLiveStreamingWorker {
 
 // MARK: Utils
 
-extension YouTubeLiveStreamingWorker {
+extension YTLiveStreaming {
    
    fileprivate func deleteAllBroadcasts(_ completed: @escaping (Bool) -> Void) {
       youTubeRequest.listBroadcasts("all", completed: { broadcastList in
@@ -148,7 +148,7 @@ extension YouTubeLiveStreamingWorker {
 
 // MARK Tests
 
-extension YouTubeLiveStreamingWorker {
+extension YTLiveStreaming {
    
    func testUpdateLiveStream() {
       let liveStreamId = "0"

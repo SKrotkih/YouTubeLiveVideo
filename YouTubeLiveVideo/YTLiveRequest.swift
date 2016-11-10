@@ -1,6 +1,6 @@
 //
-//  YouTubeLiveStreamingRequest.swift
-//  YouTubeLiveVideo
+//  YTLiveRequest.swift
+//  YTLiveStreaming
 //
 //  Created by Sergey Krotkih on 10/24/16.
 //  Copyright © 2016 Sergey Krotkih. All rights reserved.
@@ -10,7 +10,7 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 
-class YouTubeLiveStreamingRequest: NSObject {
+class YTLiveRequest: NSObject {
    
    // Set up broadcast on your Youtube account:
    // https://www.youtube.com/my_live_events
@@ -25,7 +25,7 @@ class YouTubeLiveStreamingRequest: NSObject {
 // MARK: LiveBroatcasts requests
 // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts
 
-extension YouTubeLiveStreamingRequest {
+extension YTLiveRequest {
    
    // Returns a list of YouTube broadcasts that match the API request parameters.
    // broadcastStatus:
@@ -42,7 +42,7 @@ extension YouTubeLiveStreamingRequest {
          "maxResults": 50 as AnyObject,
          "key": Private.APIkey as AnyObject
       ]
-      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.listBroadcasts(parameters), completion: { result in
+      YouTubeLiveVideoProvider.request(LiveStreamingAPI.listBroadcasts(parameters), completion: { result in
          switch result {
          case let .success(response):
             let json = JSON(data: response.data)
@@ -80,7 +80,7 @@ extension YouTubeLiveStreamingRequest {
          "id":broadcastId as AnyObject,
          "key": Private.APIkey as AnyObject
       ]
-      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.liveBroadcast(parameters), completion: { result in
+      YouTubeLiveVideoProvider.request(LiveStreamingAPI.liveBroadcast(parameters), completion: { result in
          switch result {
          case let .success(response):
             let json = JSON(data: response.data)
@@ -114,7 +114,7 @@ extension YouTubeLiveStreamingRequest {
    // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts/insert
    // Creates a broadcast.
    func createLiveBroadcast(_ title: String, startDateTime: Date, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
-      OAuth2.sharedInstance.requestToken() { token in
+      GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let headers = merge(one: ["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
             let jsonBody = "{\"snippet\": {\"title\": \"\(title)\",\"scheduledStartTime\": \"\(startDateTime.toJSONformat())\"},\"status\": {\"privacyStatus\":\"public\"}}"
@@ -165,7 +165,7 @@ extension YouTubeLiveStreamingRequest {
          "part":"id,snippet,contentDetails,status" as AnyObject,
          "key": Private.APIkey as AnyObject
       ]
-      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.transitionLiveBroadcast(parameters), completion: { result in
+      YouTubeLiveVideoProvider.request(LiveStreamingAPI.transitionLiveBroadcast(parameters), completion: { result in
          switch result {
          case let .success(response):
             let json = JSON(data: response.data)
@@ -196,7 +196,7 @@ extension YouTubeLiveStreamingRequest {
          "id":broadcastId as AnyObject,
          "key": Private.APIkey as AnyObject
       ]
-      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.deleteLiveBroadcast(parameters), completion: { result in
+      YouTubeLiveVideoProvider.request(LiveStreamingAPI.deleteLiveBroadcast(parameters), completion: { result in
          switch result {
          case let .success(response):
             let json = JSON(data: response.data)
@@ -227,7 +227,7 @@ extension YouTubeLiveStreamingRequest {
          "part":"id,snippet,contentDetails,status" as AnyObject,
          "key": Private.APIkey as AnyObject
       ]
-      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.bindLiveBroadcast(parameters), completion: { result in
+      YouTubeLiveVideoProvider.request(LiveStreamingAPI.bindLiveBroadcast(parameters), completion: { result in
          switch result {
          case let .success(response):
             let json = JSON(data: response.data)
@@ -254,7 +254,7 @@ extension YouTubeLiveStreamingRequest {
    // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts/update
    // PUT https://www.googleapis.com/youtube/v3/liveBroadcasts
    func updateLiveBroadcast(broadcastId id: String, title: String, format: String, completed: @escaping (Bool) -> Void) {
-      OAuth2.sharedInstance.requestToken() { token in
+      GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let ingestionType = "rtmp" // dash rtmp
             let headers = merge(one: ["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
@@ -299,7 +299,7 @@ extension YouTubeLiveStreamingRequest {
 // The stream provides the content that will be broadcast to YouTube users.
 // Once created, a liveStream resource can be bound to one or more liveBroadcast resources.
 
-extension YouTubeLiveStreamingRequest {
+extension YTLiveRequest {
    
    // Returns a list of video streams that match the API request parameters.
    // https://developers.google.com/youtube/v3/live/docs/liveStreams/list
@@ -309,7 +309,7 @@ extension YouTubeLiveStreamingRequest {
          "id":liveStreamId as AnyObject,
          "key": Private.APIkey as AnyObject
       ]
-      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.liveStream(parameters), completion: { result in
+      YouTubeLiveVideoProvider.request(LiveStreamingAPI.liveStream(parameters), completion: { result in
          switch result {
          case let .success(response):
             let json = JSON(data: response.data)
@@ -363,7 +363,7 @@ extension YouTubeLiveStreamingRequest {
    //   }
    
    func createLiveStream(_ title: String, description: String, streamName: String, completed: @escaping (LiveStreamModel?) -> Void) {
-      OAuth2.sharedInstance.requestToken() { token in
+      GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let resolution = LiveAPI.Resolution
             let frameRate = LiveAPI.FrameRate
@@ -414,7 +414,7 @@ extension YouTubeLiveStreamingRequest {
          "id":liveStreamId as AnyObject,
          "key": Private.APIkey as AnyObject
       ]
-      YouTubeLiveVideoProvider.request(YouTubeLiveVideoAPI.deleteLiveStream(parameters), completion: { result in
+      YouTubeLiveVideoProvider.request(LiveStreamingAPI.deleteLiveStream(parameters), completion: { result in
          switch result {
          case let .success(response):
             let json = JSON(data: response.data)
@@ -443,7 +443,7 @@ extension YouTubeLiveStreamingRequest {
    // ingestionType = dash rtmp
    
    func updateLiveStream(_ liveStreamId: String, title: String, format: String, ingestionType: String, completed: @escaping (Bool) -> Void) {
-      OAuth2.sharedInstance.requestToken() { token in
+      GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let headers = merge(one: ["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
             let jsonBody = "{\"id\":\"\(liveStreamId)\",\"snippet\": {\"title\":\"\(title)\"},\"cdn\":{\"format\":\"\(format)\",\"ingestionType\":\"\(ingestionType)\"}}}"

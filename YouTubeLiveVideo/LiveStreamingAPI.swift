@@ -1,5 +1,5 @@
 //
-//  YouTubeLiveVideoAPI.swift
+//  LiveStreamingAPI.swift
 //  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/28/16.
@@ -22,16 +22,16 @@ private func JSONResponseDataFormatter(_ data: Data) -> Data {
 
 let BaseURL = "https://www.googleapis.com/youtube/v3"
 
-let requestClosure = { (endpoint: Moya.Endpoint<YouTubeLiveVideoAPI>, done: @escaping MoyaProvider<YouTubeLiveVideoAPI>.RequestResultClosure) in
+let requestClosure = { (endpoint: Moya.Endpoint<LiveStreamingAPI>, done: @escaping MoyaProvider<LiveStreamingAPI>.RequestResultClosure) in
    OAuth2.sharedInstance.requestToken() { token in
       if let token = token {
          var request = endpoint.urlRequest as URLRequest
          request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-         var nserror: NSError! = NSError(domain: "YouTubeLiveVideoAPIHttp", code: 0, userInfo: nil)
+         var nserror: NSError! = NSError(domain: "LiveStreamingAPIHttp", code: 0, userInfo: nil)
          let error = Moya.Error.underlying(nserror)
          done(Result(request, failWith: error))
       } else {
-         var nserror: NSError! = NSError(domain: "YouTubeLiveVideoAPIHttp", code: 4000, userInfo: ["NSLocalizedDescriptionKey": "Failed Google OAuth2 request token"])
+         var nserror: NSError! = NSError(domain: "LiveStreamingAPIHttp", code: 4000, userInfo: ["NSLocalizedDescriptionKey": "Failed Google OAuth2 request token"])
          let error = Moya.Error.underlying(nserror)
          let request = endpoint.urlRequest as URLRequest
          done(Result(request, failWith: error))
@@ -39,9 +39,9 @@ let requestClosure = { (endpoint: Moya.Endpoint<YouTubeLiveVideoAPI>, done: @esc
    }
 }
 
-let YouTubeLiveVideoProvider = MoyaProvider<YouTubeLiveVideoAPI>(requestClosure: requestClosure, plugins: [NetworkLoggerPlugin(verbose: true, responseDataFormatter: JSONResponseDataFormatter)])
+let YouTubeLiveVideoProvider = MoyaProvider<LiveStreamingAPI>(requestClosure: requestClosure, plugins: [NetworkLoggerPlugin(verbose: true, responseDataFormatter: JSONResponseDataFormatter)])
 
-public enum YouTubeLiveVideoAPI {
+public enum LiveStreamingAPI {
    case listBroadcasts([String: AnyObject])
    case liveBroadcast([String: AnyObject])
    case transitionLiveBroadcast([String: AnyObject])
@@ -51,7 +51,7 @@ public enum YouTubeLiveVideoAPI {
    case deleteLiveStream([String: AnyObject])
 }
 
-extension YouTubeLiveVideoAPI: TargetType {
+extension LiveStreamingAPI: TargetType {
    public var baseURL: URL { return URL(string: BaseURL)! }
    
    public var method: Moya.Method {

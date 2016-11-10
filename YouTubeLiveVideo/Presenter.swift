@@ -18,7 +18,7 @@ class YouTubeLiveStreamingPresenter: NSObject {
    
    fileprivate var isLiveVideo: Bool = false
    
-   var youTubeRequest: YouTubeLiveStreamingRequest!
+   var youTubeRequest: LiveStreamingRequest!
    var viewController: UIViewController!
 
    fileprivate var liveViewController: LFLiveViewController!

@@ -12,14 +12,13 @@ class YouTubeConfigurator: NSObject {
    
    func configure(_ viewController: ViewController) {
       
-      let worker = YouTubeLiveStreamingWorker()
-      let requests = YouTubeLiveStreamingRequest()
-      let presenter = YouTubeLiveStreamingPresenter()
+      let worker = YTLiveStreaming()
+      let requests = LiveStreamingRequest()
+      let presenter = Presenter()
       
       viewController.input = worker
       
       worker.youTubeRequest = requests
-      worker.youTubePresenter = presenter
       
       presenter.youTubeRequest = requests
       presenter.viewController = viewController

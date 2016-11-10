@@ -1,5 +1,5 @@
 //
-//  OAuth2.swift
+//  GoogleOAuth2.swift
 //  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/28/16.
@@ -17,13 +17,13 @@ import AlamofireOauth2
 // For more info see https://developers.google.com/identity/protocols/OAuth2WebServer#handlingtheresponse
 // And https://developers.google.com/+/web/api/rest/oauth
 
-class OAuth2: NSObject {
+class GoogleOAuth2: NSObject {
 
    var _googleOauth2Settings: Oauth2Settings?
    
-   class var sharedInstance: OAuth2 {
+   class var sharedInstance: GoogleOAuth2 {
       struct Singleton {
-         static let instance = OAuth2()
+         static let instance = GoogleOAuth2()
       }
       return Singleton.instance
    }
