@@ -10,25 +10,26 @@ import UIKit
 
 class YouTubeLiveStreamingPresenter: NSObject {
    
-   private var timer: NSTimer?
-   private var livestreamId: String?
+   fileprivate var timer: Timer?
+   fileprivate var livestreamId: String?
    
-   private var liveBroadcast: LiveBroadcastStreamModel?
-   private var liveStream: LiveStreamModel?
+   fileprivate var liveBroadcast: LiveBroadcastStreamModel?
+   fileprivate var liveStream: LiveStreamModel?
    
-   private var isLiveVideo: Bool = false
+   fileprivate var isLiveVideo: Bool = false
    
    var youTubeRequest: YouTubeLiveStreamingRequest!
    var viewController: UIViewController!
 
-   private var liveViewController: VideoStreamViewController!
+   fileprivate var liveViewController: LFLiveViewController!
+   
 }
 
 // MARK: Live stream publishing
 
 extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
    
-   func showVideoStreamViewController(liveStream: LiveStreamModel, liveBroadcast: LiveBroadcastStreamModel, completed: () -> Void) {
+   func showVideoStreamViewController(_ liveStream: LiveStreamModel, liveBroadcast: LiveBroadcastStreamModel, completed: @escaping () -> Void) {
       self.liveBroadcast = liveBroadcast
       self.liveStream = liveStream
       
@@ -43,33 +44,36 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
       print("\n-BroadcastId=\(liveBroadcast.id);\n-Live stream id=\(sreamId); \n-title=\(streamTitle); \n-start=\(scheduledStartTime); \n-STREAM_URL=\(streamUrl)/STREAM_NAME=\(streamName): created!\n-MONITOR_STREAM=\(monitorStream)\n")
       print("Watch the live video: https://www.youtube.com/watch?v=\(liveBroadcast.id)")
       
-      self.liveViewController = VideoStreamViewController()
-      self.liveViewController.delegate = self
-      self.liveViewController.scheduledStartTime = scheduledStartTime
-      self.liveViewController.livebroadcast = liveBroadcast
-      
-      Preference.defaultInstance.uri = streamUrl
-      Preference.defaultInstance.streamName = streamName
-
-      self.viewController.presentViewController(self.liveViewController, animated: false, completion: {
+      let storyboard = UIStoryboard(name: "Main", bundle: nil)
+      if let liveViewController = storyboard.instantiateViewController(withIdentifier: "LFLiveViewController") as? LFLiveViewController {
+         self.liveViewController = liveViewController
+         self.liveViewController.delegate = self
+         self.liveViewController.scheduledStartTime = scheduledStartTime as NSDate?
+         self.liveViewController.livebroadcast = liveBroadcast
+         self.liveViewController.streamURL = streamUrl
+         self.liveViewController.streamName = streamName
+         self.viewController.present(self.liveViewController, animated: false, completion: {
+            completed()
+         })
+      } else {
          completed()
-      })
+      }
    }
 
-   private func dismissVideoStreamViewController() {
-      dispatch_async(dispatch_get_main_queue()) {
-         self.viewController.dismissViewControllerAnimated(true, completion: {
+   fileprivate func dismissVideoStreamViewController() {
+      DispatchQueue.main.async {
+         self.viewController.dismiss(animated: true, completion: {
          })
       }
    }
    
-   func startPublishing(broadcast broadcast: LiveBroadcastStreamModel?, completed: (Bool) -> Void) {
+   func startPublishing(broadcast: LiveBroadcastStreamModel?, completed: (Bool) -> Void) {
       self.isLiveVideo = false
       self.startChekingStreamStatusTimer()
       completed(true)
    }
    
-   func finishPublishing(broadcast broadcast: LiveBroadcastStreamModel?, completed: (Bool) -> Void) {
+   func finishPublishing(broadcast: LiveBroadcastStreamModel?, completed: @escaping (Bool) -> Void) {
       stopChekingStreamStatusTimer()
       
       if let broadcast = broadcast {
@@ -88,7 +92,7 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
       completed(true)
    }
    
-   func cancelPublishing(broadcast broadcast: LiveBroadcastStreamModel?, completed: (Bool) -> Void) {
+   func cancelPublishing(broadcast: LiveBroadcastStreamModel?, completed: (Bool) -> Void) {
       if broadcast == nil {
          self.dismissVideoStreamViewController()
       } else if let liveBroadcast = self.liveBroadcast {
@@ -103,17 +107,17 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
       }
    }
    
-   private func startChekingStreamStatusTimer() {
+   fileprivate func startChekingStreamStatusTimer() {
 
       let timerIntervalInSec = 5.0
       
       timer?.invalidate()
-      timer = NSTimer(timeInterval: timerIntervalInSec, target: self, selector: #selector(requestBroadcastStatus), userInfo: nil, repeats: true)
-      NSRunLoop.mainRunLoop().addTimer(timer!, forMode: NSRunLoopCommonModes)
+      timer = Timer(timeInterval: timerIntervalInSec, target: self, selector: #selector(requestBroadcastStatus), userInfo: nil, repeats: true)
+      RunLoop.main.add(timer!, forMode: RunLoopMode.commonModes)
       requestBroadcastStatus()
    }
    
-   private func stopChekingStreamStatusTimer() {
+   fileprivate func stopChekingStreamStatusTimer() {
       timer?.invalidate()
       timer = nil
    }
@@ -160,10 +164,15 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
                   let healthStatus = liveStream.status.healthStatus.status
                   
                   if broadcastStatus == "live" || broadcastStatus == "liveStarting" {
-                     self.liveViewController.showCurrentStatus("● LIVE   ")
+                     self.liveViewController.showCurrentStatus(currStatus: "● LIVE   ")
                   } else {
                      let text = "status: \(broadcastStatus) [\(status);\(healthStatus)]"
-                     self.liveViewController.showCurrentStatus(text)
+                     
+                     if text == "active" {
+                        print("active")
+                     }
+                     
+                     self.liveViewController.showCurrentStatus(currStatus: text)
                      self.transitionBroadcastToStatus("live", completed: { inLive in
                         if inLive {
                            print("Transition to the LIVE status was made successfully")
@@ -182,7 +191,7 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
       })
    }
 
-   private func transitionBroadcastToStatus(status: String, completed: (Bool) -> Void) {
+   fileprivate func transitionBroadcastToStatus(_ status: String, completed: @escaping (Bool) -> Void) {
       if let liveBroadcast = self.liveBroadcast {
          // complete – The broadcast is over. YouTube stops transmitting video.
          // live – The broadcast is visible to its audience. YouTube transmits video to the broadcast's monitor stream and its broadcast stream.

@@ -133,7 +133,7 @@ public struct LiveBroadcastListModel {
       let channelId: String
       let description: String
       let isDefaultBroadcast: Int
-      let scheduledStartTime: NSDate
+      let scheduledStartTime: Date
       let title: String
       let thumbnails: Thumbnails
    }
@@ -163,7 +163,7 @@ public struct LiveBroadcastListModel {
 // MARK: - Decodable
 
 extension LiveBroadcastListModel: Decodable {
-   public static func decode(json: JSON) -> LiveBroadcastListModel {
+   public static func decode(_ json: JSON) -> LiveBroadcastListModel {
       let pageInfo = LiveBroadcastListModel.PageInfo.decode(json["pageInfo"])
       var items: [LiveBroadcastStreamModel] = []
       if let content = json["items"].array {
@@ -183,7 +183,7 @@ extension LiveBroadcastListModel: Decodable {
 }
 
 extension LiveBroadcastListModel.Item {
-   public static func decode(json: JSON) -> LiveBroadcastListModel.Item {
+   public static func decode(_ json: JSON) -> LiveBroadcastListModel.Item {
       let snippet = LiveBroadcastListModel.Snipped.decode(json["snippet"])
       let status = LiveBroadcastListModel.Status.decode(json["status"])
       let model = LiveBroadcastListModel.Item (
@@ -198,7 +198,7 @@ extension LiveBroadcastListModel.Item {
 }
 
 extension LiveBroadcastListModel.Status {
-   public static func decode(json: JSON) -> LiveBroadcastListModel.Status {
+   public static func decode(_ json: JSON) -> LiveBroadcastListModel.Status {
       let model = LiveBroadcastListModel.Status (
          lifeCycleStatus: json["lifeCycleStatus"].stringValue,
          recordingStatus: json["recordingStatus"].stringValue,
@@ -209,7 +209,7 @@ extension LiveBroadcastListModel.Status {
 }
 
 extension LiveBroadcastListModel.PageInfo {
-   public static func decode(json: JSON) -> LiveBroadcastListModel.PageInfo {
+   public static func decode(_ json: JSON) -> LiveBroadcastListModel.PageInfo {
       let model = LiveBroadcastListModel.PageInfo (
          resultsPerPage: json["resultsPerPage"].intValue,
          totalResults: json["totalResults"].intValue
@@ -219,7 +219,7 @@ extension LiveBroadcastListModel.PageInfo {
 }
 
 extension LiveBroadcastListModel.Snipped {
-   public static func decode(json: JSON) -> LiveBroadcastListModel.Snipped {
+   public static func decode(_ json: JSON) -> LiveBroadcastListModel.Snipped {
       
       let thumbnails = LiveBroadcastListModel.Thumbnails.decode(json["thumbnails"])
       
@@ -228,7 +228,7 @@ extension LiveBroadcastListModel.Snipped {
          channelId: json["channelId"].stringValue,
          description: json["description"].stringValue,
          isDefaultBroadcast: json["isDefaultBroadcast"].intValue,
-         scheduledStartTime: JsonUtility.dateWithJSONString(json["scheduledStartTime"].stringValue),
+         scheduledStartTime: JsonUtility.date(withJSONString: json["scheduledStartTime"].stringValue),
          title: json["title"].stringValue,
          thumbnails: thumbnails
       )
@@ -256,7 +256,7 @@ extension LiveBroadcastListModel.Thumbnails {
    //                     };
    //                 };
    
-   public static func decode(json: JSON) -> LiveBroadcastListModel.Thumbnails {
+   public static func decode(_ json: JSON) -> LiveBroadcastListModel.Thumbnails {
       let def = LiveBroadcastListModel.Thumbnail.decode(json["default"])
       let height = LiveBroadcastListModel.Thumbnail.decode(json["high"])
       let medium = LiveBroadcastListModel.Thumbnail.decode(json["medium"])
@@ -271,7 +271,7 @@ extension LiveBroadcastListModel.Thumbnails {
 }
 
 extension LiveBroadcastListModel.Thumbnail {
-   public static func decode(json: JSON) -> LiveBroadcastListModel.Thumbnail {
+   public static func decode(_ json: JSON) -> LiveBroadcastListModel.Thumbnail {
       let model = LiveBroadcastListModel.Thumbnail (
          height: json["height"].intValue,
          url: json["url"].stringValue,

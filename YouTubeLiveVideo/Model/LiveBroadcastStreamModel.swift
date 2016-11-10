@@ -71,7 +71,7 @@ public struct LiveBroadcastStreamModel {
       let description: String
       let isDefaultBroadcast: Bool
       let liveChatId: String
-      let scheduledStartTime: NSDate
+      let scheduledStartTime: Date
       let thumbnails: Thumbnails
    }
 
@@ -124,7 +124,7 @@ public struct LiveBroadcastStreamModel {
 // MARK: - Decodable
 
 extension LiveBroadcastStreamModel: Decodable {
-   public static func decode(json: JSON) -> LiveBroadcastStreamModel {
+   public static func decode(_ json: JSON) -> LiveBroadcastStreamModel {
       
       let snipped = LiveBroadcastStreamModel.Snipped.decode(json["snippet"])
       let contentDetails = LiveBroadcastStreamModel.ContentDetails.decode(json["contentDetails"])
@@ -143,7 +143,7 @@ extension LiveBroadcastStreamModel: Decodable {
 }
 
 extension LiveBroadcastStreamModel.Snipped {
-   public static func decode(json: JSON) -> LiveBroadcastStreamModel.Snipped {
+   public static func decode(_ json: JSON) -> LiveBroadcastStreamModel.Snipped {
       
       let thumbnails = LiveBroadcastStreamModel.Thumbnails.decode(json["thumbnails"])
       
@@ -154,7 +154,7 @@ extension LiveBroadcastStreamModel.Snipped {
          description: json["description"].stringValue,
          isDefaultBroadcast: json["isDefaultStream"].boolValue,
          liveChatId: json["liveChatId"].stringValue,
-         scheduledStartTime: JsonUtility.dateWithJSONString(json["scheduledStartTime"].stringValue),
+         scheduledStartTime: JsonUtility.date(withJSONString: json["scheduledStartTime"].stringValue),
          thumbnails: thumbnails
       )
       return model
@@ -162,7 +162,7 @@ extension LiveBroadcastStreamModel.Snipped {
 }
 
 extension LiveBroadcastStreamModel.ContentDetails {
-   public static func decode(json: JSON) -> LiveBroadcastStreamModel.ContentDetails {
+   public static func decode(_ json: JSON) -> LiveBroadcastStreamModel.ContentDetails {
       let monitorStream = LiveBroadcastStreamModel.MonitorStream.decode(json["monitorStream"])
       let model = LiveBroadcastStreamModel.ContentDetails (
          startWithSlate: json["startWithSlate"].boolValue,
@@ -182,7 +182,7 @@ extension LiveBroadcastStreamModel.ContentDetails {
 }
 
 extension LiveBroadcastStreamModel.MonitorStream {
-   public static func decode(json: JSON) -> LiveBroadcastStreamModel.MonitorStream {
+   public static func decode(_ json: JSON) -> LiveBroadcastStreamModel.MonitorStream {
       let model = LiveBroadcastStreamModel.MonitorStream (
          enableMonitorStream: json["enableMonitorStream"].boolValue,
          broadcastStreamDelayMs: json["broadcastStreamDelayMs"].intValue,
@@ -193,7 +193,7 @@ extension LiveBroadcastStreamModel.MonitorStream {
 }
 
 extension LiveBroadcastStreamModel.Status {
-   public static func decode(json: JSON) -> LiveBroadcastStreamModel.Status {
+   public static func decode(_ json: JSON) -> LiveBroadcastStreamModel.Status {
       let model = LiveBroadcastStreamModel.Status (
          lifeCycleStatus: json["lifeCycleStatus"].stringValue,
          recordingStatus: json["recordingStatus"].stringValue,
@@ -223,7 +223,7 @@ extension LiveBroadcastStreamModel.Thumbnails {
    //                     };
    //                 };
    
-   public static func decode(json: JSON) -> LiveBroadcastStreamModel.Thumbnails {
+   public static func decode(_ json: JSON) -> LiveBroadcastStreamModel.Thumbnails {
       let def = LiveBroadcastStreamModel.Thumbnail.decode(json["default"])
       let height = LiveBroadcastStreamModel.Thumbnail.decode(json["high"])
       let medium = LiveBroadcastStreamModel.Thumbnail.decode(json["medium"])
@@ -238,7 +238,7 @@ extension LiveBroadcastStreamModel.Thumbnails {
 }
 
 extension LiveBroadcastStreamModel.Thumbnail {
-   public static func decode(json: JSON) -> LiveBroadcastStreamModel.Thumbnail {
+   public static func decode(_ json: JSON) -> LiveBroadcastStreamModel.Thumbnail {
       let model = LiveBroadcastStreamModel.Thumbnail (
          height: json["height"].intValue,
          url: json["url"].stringValue,

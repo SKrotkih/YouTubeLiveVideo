@@ -20,7 +20,7 @@ class ViewController: UIViewController {
    var current = [LiveBroadcastStreamModel]()
    var past = [LiveBroadcastStreamModel]()
    
-   private var completedThreadsCount: Int = 0
+   fileprivate var completedThreadsCount: Int = 0
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -38,10 +38,10 @@ class ViewController: UIViewController {
       // Dispose of any resources that can be recreated.
    }
 
-   @IBAction func createBroadcastButtonTapped(sender: AnyObject) {
+   @IBAction func createBroadcastButtonTapped(_ sender: AnyObject) {
       let title = "Live video"
       let description = "Test broadcast video"
-      let startDate = DateConverter.dateAfter(NSDate(), after: (hour: 0, minute: 2, second: 0))
+      let startDate = DateConverter.dateAfter(Date(), after: (hour: 0, minute: 2, second: 0))
       
       Alert.sharedInstance.showConfirmCancel("YouTube Live Streaming API", message: "You realy want to create a new Live broadcast video?", onConfirm: {
          self.input.createBroadcast(title, description: description, startTime: startDate, completed: { success in
@@ -58,7 +58,7 @@ class ViewController: UIViewController {
 
 extension ViewController {
    
-   private func loadData() {
+   fileprivate func loadData() {
       completedThreadsCount = 0
       input.getUpcomingBroadcasts(){ streams in
          self.applyStreams("upcoming", streams: streams)
@@ -71,7 +71,7 @@ extension ViewController {
       }
    }
    
-   private func applyStreams(type: String, streams: [LiveBroadcastStreamModel]?) {
+   fileprivate func applyStreams(_ type: String, streams: [LiveBroadcastStreamModel]?) {
       completedThreadsCount += 1
       if let broadcasts = streams {
          if type == "upcoming" {
@@ -93,24 +93,24 @@ extension ViewController {
 
 extension ViewController {
    
-   private func setUpRefreshControl() {
+   fileprivate func setUpRefreshControl() {
       self.refreshControl = UIRefreshControl()
-      self.refreshControl.attributedTitle = NSAttributedString(string: "Pull down and release for updating table data source", attributes: [NSForegroundColorAttributeName: UIColor.redColor()])
-      self.refreshControl.tintColor = UIColor.redColor()
-      self.refreshControl.addTarget(self, action: #selector(ViewController.refreshData(_:)), forControlEvents: UIControlEvents.ValueChanged)
+      self.refreshControl.attributedTitle = NSAttributedString(string: "Pull down and release for updating table data source", attributes: [NSForegroundColorAttributeName: UIColor.red])
+      self.refreshControl.tintColor = UIColor.red
+      self.refreshControl.addTarget(self, action: #selector(ViewController.refreshData(_:)), for: UIControlEvents.valueChanged)
       self.tableView.addSubview(refreshControl)
    }
    
-   func refreshData(sender: AnyObject) {
+   func refreshData(_ sender: AnyObject) {
       self.refreshControl.endRefreshing()
       refreshData()
    }
    
-   private func refreshData() {
+   fileprivate func refreshData() {
       self.upcoming.removeAll()
       self.current.removeAll()
       self.past.removeAll()
-      dispatch_async(dispatch_get_main_queue(), {
+      DispatchQueue.main.async(execute: {
          self.tableView.reloadData()
       })
       self.loadData()
@@ -123,11 +123,11 @@ extension ViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
    
    
-   func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+   func numberOfSections(in tableView: UITableView) -> Int {
       return 3
    }
    
-   func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+   func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
       switch section {
       case 0:
          return "Upcoming"
@@ -140,7 +140,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
       }
    }
    
-   func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
       switch section {
       case 0:
          return self.upcoming.count
@@ -153,8 +153,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
       }
    }
    
-   func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-      let cell = tableView.dequeueReusableCellWithIdentifier("TableViewCell") as! TableViewCell
+   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+      let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell") as! TableViewCell
       var broadcast: LiveBroadcastStreamModel!
       switch indexPath.section {
       case 0:
@@ -174,7 +174,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
       return cell
    }
    
-   func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
       
       var broadcast: LiveBroadcastStreamModel!
       switch indexPath.section {

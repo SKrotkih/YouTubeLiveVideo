@@ -10,7 +10,7 @@ import UIKit
 
 class YouTubeConfigurator: NSObject {
    
-   func configure(viewController: ViewController) {
+   func configure(_ viewController: ViewController) {
       
       let worker = YouTubeLiveStreamingWorker()
       let requests = YouTubeLiveStreamingRequest()

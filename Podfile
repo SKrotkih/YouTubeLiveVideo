@@ -1,14 +1,14 @@
 target 'YouTubeLiveVideo' do
 
-platform :ios, '8.0'
+platform :ios, '9.0'
 use_frameworks!
 
-pod 'SwiftyJSON'
-pod 'Alamofire', '~> 3.4'
+pod 'Moya', '8.0.0-beta.2'
+pod "AlamofireOauth2"
+pod 'KeychainAccess'
 pod "XCDYouTubeKit", "~> 2.5"
-pod 'OAuthSwift', '~> 0.5.0'
-pod 'AeroGearOAuth2'
-pod 'XCGLogger', '~> 3.3'
-pod "Moya"
+pod 'XCGLogger'
+pod 'LFLiveKit'
+pod 'SwiftyJSON'
 
 end

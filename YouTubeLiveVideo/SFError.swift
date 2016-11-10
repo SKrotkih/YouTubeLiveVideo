@@ -8,24 +8,24 @@
 
 import UIKit
 
-enum SFError: ErrorType {
-    case NetworkError(message: String)
-    case HttpError(statusCode: Int, statusText: String, message: String?)
-    case AuthError(message: String)
-    case LogicError(message: String)
-    case NoInternetError()
+enum SFError: Error {
+    case networkError(message: String)
+    case httpError(statusCode: Int, statusText: String, message: String?)
+    case authError(message: String)
+    case logicError(message: String)
+    case noInternetError()
     
     func message() -> String {
         switch self {
-        case .NetworkError(let message):
+        case .networkError(let message):
             return message
-        case .HttpError(let statusCode, let statusText, let message):
+        case .httpError(let statusCode, let statusText, let message):
             return message ?? "\(statusCode): \(statusText)"
-        case .AuthError(let message):
+        case .authError(let message):
             return message
-        case .LogicError(let message):
+        case .logicError(let message):
             return message
-        case .NoInternetError:
+        case .noInternetError:
             return "Please check your connection and try again."
         }
     }

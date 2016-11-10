@@ -8,14 +8,17 @@
 
 import UIKit
 
+typealias CompletePublishing = (Bool) -> Void
+
 class YouTubeLiveStreamingWorker: NSObject {
    var youTubeRequest: YouTubeLiveStreamingRequest!
    var youTubePresenter: YouTubeLiveStreamingPresenter!
+   var completePublishing: CompletePublishing?
 }
 
 extension YouTubeLiveStreamingWorker {
    
-   func getActiveBroadcasts(completed: ([LiveBroadcastStreamModel]?) -> Void) {
+   func getActiveBroadcasts(_ completed: @escaping ([LiveBroadcastStreamModel]?) -> Void) {
       youTubeRequest.listBroadcasts("active", completed: { broadcasts in
          if let broadcasts = broadcasts {
             self.fillList(broadcasts, completed: completed)
@@ -24,8 +27,8 @@ extension YouTubeLiveStreamingWorker {
          }
       })
    }
-
-   func getCompletedBroadcasts(completed: ([LiveBroadcastStreamModel]?) -> Void) {
+   
+   func getCompletedBroadcasts(_ completed: @escaping ([LiveBroadcastStreamModel]?) -> Void) {
       youTubeRequest.listBroadcasts("completed", completed: { broadcasts in
          if let broadcasts = broadcasts {
             self.fillList(broadcasts, completed: completed)
@@ -35,7 +38,7 @@ extension YouTubeLiveStreamingWorker {
       })
    }
    
-   func getUpcomingBroadcasts(completed: ([LiveBroadcastStreamModel]?) -> Void) {
+   func getUpcomingBroadcasts(_ completed: @escaping ([LiveBroadcastStreamModel]?) -> Void) {
       youTubeRequest.listBroadcasts("upcoming", completed: { broadcasts in
          if let broadcasts = broadcasts {
             self.fillList(broadcasts, completed: completed)
@@ -44,21 +47,21 @@ extension YouTubeLiveStreamingWorker {
          }
       })
    }
-
-   private func fillList(broadcasts: LiveBroadcastListModel, completed: ([LiveBroadcastStreamModel]?) -> Void) {
+   
+   fileprivate func fillList(_ broadcasts: LiveBroadcastListModel, completed: ([LiveBroadcastStreamModel]?) -> Void) {
       let items = broadcasts.items
-      let sortedItems = items.sort({ JsonUtility.dateWithJSONString($0.snipped.publishedAt).compare(JsonUtility.dateWithJSONString($1.snipped.publishedAt)) == NSComparisonResult.OrderedDescending })
+      let sortedItems = items.sorted(by: { JsonUtility.date(withJSONString: $0.snipped.publishedAt).compare(JsonUtility.date(withJSONString: $1.snipped.publishedAt)) == ComparisonResult.orderedDescending })
       completed(sortedItems)
    }
    
-   func createBroadcast(title: String, description: String, startTime: NSDate, completed: (Bool) -> Void) {
-
+   func createBroadcast(_ title: String, description: String, startTime: Date, completed: @escaping (Bool) -> Void) {
+      
       // Create Live broadcast
       let liveStreamDescription = "This stream was created by the YouTubeLiveVideo iOS application"
       let liveStreamName = "Test"
       
-      youTubeRequest.createLiveBroadcast(title, startDateTime: startTime, completed: { liveLiveBroadcastStreamModel in
-         if let liveBroadcast = liveLiveBroadcastStreamModel {
+      youTubeRequest.createLiveBroadcast(title, startDateTime: startTime, completed: { liveBroadcastModel in
+         if let liveBroadcast = liveBroadcastModel {
             // Create Live stream
             self.youTubeRequest.createLiveStream(title, description: liveStreamDescription, streamName: liveStreamName) { liveStream in
                if let liveStream = liveStream {
@@ -80,27 +83,33 @@ extension YouTubeLiveStreamingWorker {
             completed(false)
          }
       })
-
+      
    }
    
-   func startBroadcast(broadcast: LiveBroadcastStreamModel, completed: (Bool) -> Void) {
+   func startBroadcast(_ broadcast: LiveBroadcastStreamModel, completed: @escaping (Bool) -> Void) {
       let broadcastId = broadcast.id
       let liveStreamId = broadcast.contentDetails.boundStreamId
       if broadcastId.characters.count > 0 &&  liveStreamId.characters.count > 0 {
+         
+         self.completePublishing = completed
+         
          youTubeRequest.getLiveBroadcast(broadcastId: broadcastId) { liveBroadcast in
             if let liveBroadcast = liveBroadcast {
                self.youTubeRequest.getLiveStream(liveStreamId, completed: { liveStream in
                   if let liveStream = liveStream {
                      self.youTubePresenter.showVideoStreamViewController(liveStream, liveBroadcast: liveBroadcast, completed: {
+                           self.youTubePresenter.startPublishing(broadcast: liveBroadcast, completed: { (_) in
+                              
+                           })
                      })
                   }
                })
             } else {
-               print("Something went wrong")
+               print("Something went wrong. Please xheck broadcast.youtubeId. It has to contain broadcast Id and live stream Id")
             }
          }
       } else {
-         print("Something went wrong")
+         print("Something went wrong. Please xheck broadcast.youtubeId. It has to contain broadcast Id and live stream Id")
       }
    }
    
@@ -110,7 +119,7 @@ extension YouTubeLiveStreamingWorker {
 
 extension YouTubeLiveStreamingWorker {
    
-   private func deleteAllBroadcasts(completed: (Bool) -> Void) {
+   fileprivate func deleteAllBroadcasts(_ completed: @escaping (Bool) -> Void) {
       youTubeRequest.listBroadcasts("all", completed: { broadcastList in
          if let broadcastList = broadcastList {
             let items = broadcastList.items
@@ -121,7 +130,7 @@ extension YouTubeLiveStreamingWorker {
       })
    }
    
-   private func deleteBroadcast(items: [LiveBroadcastStreamModel], index: Int, completed: (Bool) -> Void) {
+   fileprivate func deleteBroadcast(_ items: [LiveBroadcastStreamModel], index: Int, completed: @escaping (Bool) -> Void) {
       if index < items.count {
          let item = items[index]
          let broadcastId = item.id

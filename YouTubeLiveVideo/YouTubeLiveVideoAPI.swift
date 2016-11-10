@@ -10,10 +10,10 @@ import Foundation
 import Moya
 import Result
 
-private func JSONResponseDataFormatter(data: NSData) -> NSData {
+private func JSONResponseDataFormatter(_ data: Data) -> Data {
    do {
-      let dataAsJSON = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-      let prettyData =  try NSJSONSerialization.dataWithJSONObject(dataAsJSON, options: .PrettyPrinted)
+      let dataAsJSON = try JSONSerialization.jsonObject(with: data, options: [])
+      let prettyData =  try JSONSerialization.data(withJSONObject: dataAsJSON, options: .prettyPrinted)
       return prettyData
    } catch {
       return data //fallback to original data if it cant be serialized
@@ -22,120 +22,126 @@ private func JSONResponseDataFormatter(data: NSData) -> NSData {
 
 let BaseURL = "https://www.googleapis.com/youtube/v3"
 
-let requestClosure = { (endpoint: Moya.Endpoint<YouTubeLiveVideoAPI>, done: MoyaProvider<YouTubeLiveVideoAPI>.RequestResultClosure) in
-   let request = endpoint.urlRequest.mutableCopy() as! NSMutableURLRequest
-   OAuth2.sharedInstance.request() { token in
+let requestClosure = { (endpoint: Moya.Endpoint<YouTubeLiveVideoAPI>, done: @escaping MoyaProvider<YouTubeLiveVideoAPI>.RequestResultClosure) in
+   OAuth2.sharedInstance.requestToken() { token in
       if let token = token {
-         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+         var request = endpoint.urlRequest as URLRequest
+         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
          var nserror: NSError! = NSError(domain: "YouTubeLiveVideoAPIHttp", code: 0, userInfo: nil)
-         let error = Moya.Error.Underlying(nserror)
+         let error = Moya.Error.underlying(nserror)
          done(Result(request, failWith: error))
       } else {
          var nserror: NSError! = NSError(domain: "YouTubeLiveVideoAPIHttp", code: 4000, userInfo: ["NSLocalizedDescriptionKey": "Failed Google OAuth2 request token"])
-         let error = Moya.Error.Underlying(nserror)
+         let error = Moya.Error.underlying(nserror)
+         let request = endpoint.urlRequest as URLRequest
          done(Result(request, failWith: error))
       }
    }
 }
 
-let YouTubeLiveVideoProvider = MoyaProvider<YouTubeLiveVideoAPI>(plugins: [NetworkLoggerPlugin(verbose: true, responseDataFormatter: JSONResponseDataFormatter)], requestClosure: requestClosure)
+let YouTubeLiveVideoProvider = MoyaProvider<YouTubeLiveVideoAPI>(requestClosure: requestClosure, plugins: [NetworkLoggerPlugin(verbose: true, responseDataFormatter: JSONResponseDataFormatter)])
 
 public enum YouTubeLiveVideoAPI {
-   case ListBroadcasts([String: AnyObject])
-   case LiveBroadcast([String: AnyObject])
-   case TransitionLiveBroadcast([String: AnyObject])
-   case DeleteLiveBroadcast([String: AnyObject])
-   case BindLiveBroadcast([String: AnyObject])
-   case LiveStream([String: AnyObject])
-   case DeleteLiveStream([String: AnyObject])
+   case listBroadcasts([String: AnyObject])
+   case liveBroadcast([String: AnyObject])
+   case transitionLiveBroadcast([String: AnyObject])
+   case deleteLiveBroadcast([String: AnyObject])
+   case bindLiveBroadcast([String: AnyObject])
+   case liveStream([String: AnyObject])
+   case deleteLiveStream([String: AnyObject])
 }
 
 extension YouTubeLiveVideoAPI: TargetType {
-   public var baseURL: NSURL { return NSURL(string: BaseURL)! }
+   public var baseURL: URL { return URL(string: BaseURL)! }
    
    public var method: Moya.Method {
       switch self {
-      case .ListBroadcasts:
+      case .listBroadcasts:
          return .GET
-      case .LiveBroadcast:
+      case .liveBroadcast:
          return .GET
-      case .TransitionLiveBroadcast:
+      case .transitionLiveBroadcast:
          return .POST
-      case .DeleteLiveBroadcast:
+      case .deleteLiveBroadcast:
          return .DELETE
-      case .BindLiveBroadcast:
+      case .bindLiveBroadcast:
          return .POST
-      case .LiveStream:
+      case .liveStream:
          return .GET
-      case .DeleteLiveStream:
+      case .deleteLiveStream:
          return .DELETE
       }
    }
    
    public var path: String {
       switch self {
-      case .ListBroadcasts(_):
+      case .listBroadcasts(_):
          return "/liveBroadcasts"
-      case .LiveBroadcast(_):
+      case .liveBroadcast(_):
          return "/liveBroadcasts"
-      case .TransitionLiveBroadcast(_):
+      case .transitionLiveBroadcast(_):
          return "/liveBroadcasts/transition"
-      case .DeleteLiveBroadcast(_):
+      case .deleteLiveBroadcast(_):
          return "/liveBroadcasts"
-      case BindLiveBroadcast(_):
+      case .bindLiveBroadcast(_):
          return "/liveBroadcasts/bind"
-      case .LiveStream(_):
+      case .liveStream(_):
          return "/liveStreams"
-      case DeleteLiveStream(_):
+      case .deleteLiveStream(_):
          return "/liveStreams"
          
       }
    }
    
-   public var parameters: [String: AnyObject]? {
+   public var parameters: [String: Any]? {
       switch self {
-      case .ListBroadcasts(let parameters):
+      case .listBroadcasts(let parameters):
          return parameters
-      case .LiveBroadcast(let parameters):
+      case .liveBroadcast(let parameters):
          return parameters
-      case .TransitionLiveBroadcast(let parameters):
+      case .transitionLiveBroadcast(let parameters):
          return parameters
-      case .DeleteLiveBroadcast(let parameters):
+      case .deleteLiveBroadcast(let parameters):
          return parameters
-      case BindLiveBroadcast(let parameters):
+      case .bindLiveBroadcast(let parameters):
          return parameters
-      case .LiveStream(let parameters):
+      case .liveStream(let parameters):
          return parameters
-      case DeleteLiveStream(let parameters):
+      case .deleteLiveStream(let parameters):
          return parameters
          
       }
    }
    
-   public var sampleData: NSData {
+   public var sampleData: Data {
       switch self {
-      case .ListBroadcasts(_):
-         return NSData()
-      case .LiveBroadcast(_):
-         return NSData()
-      case .TransitionLiveBroadcast(_):
-         return NSData()
-      case .DeleteLiveBroadcast(_):
-         return NSData()
-      case BindLiveBroadcast(_):
-         return NSData()
-      case .LiveStream(_):
-         return NSData()
-      case .DeleteLiveStream(_):
-         return NSData()
+      case .listBroadcasts(_):
+         return Data()
+      case .liveBroadcast(_):
+         return Data()
+      case .transitionLiveBroadcast(_):
+         return Data()
+      case .deleteLiveBroadcast(_):
+         return Data()
+      case .bindLiveBroadcast(_):
+         return Data()
+      case .liveStream(_):
+         return Data()
+      case .deleteLiveStream(_):
+         return Data()
       }
    }
    
    public var multipartBody: [MultipartFormData]? {
       return []
    }
+   
+   public var task: Task {
+      return .request
+   }
+   
 }
 
-public func url(route: TargetType) -> String {
-   return route.baseURL.URLByAppendingPathComponent(route.path).absoluteString
+public func url(_ route: TargetType) -> String {
+   return route.baseURL.appendingPathComponent(route.path).absoluteString
 }

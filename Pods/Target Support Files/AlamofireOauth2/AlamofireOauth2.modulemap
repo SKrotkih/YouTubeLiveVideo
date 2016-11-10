@@ -1,0 +1,6 @@
+framework module AlamofireOauth2 {
+  umbrella header "AlamofireOauth2-umbrella.h"
+
+  export *
+  module * { export * }
+}

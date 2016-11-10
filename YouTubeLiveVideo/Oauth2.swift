@@ -8,17 +8,19 @@
 
 import Foundation
 import UIKit
-import AeroGearOAuth2
-import AeroGearHttp
+import AlamofireOauth2
+
+// Developer console
+// https://console.developers.google.com/apis
+
+// Create your own clientID at https://console.developers.google.com/project (secret can be left blank!)
+// For more info see https://developers.google.com/identity/protocols/OAuth2WebServer#handlingtheresponse
+// And https://developers.google.com/+/web/api/rest/oauth
 
 class OAuth2: NSObject {
 
-   // Developer console
-   // https://console.developers.google.com/apis
-   // TODO: Change Client Id on yours:
-   let kGoogleClientId = "495403403209-heee4af4qefp6ujvi216ar5rockjnr6l.apps.googleusercontent.com"
+   var _googleOauth2Settings: Oauth2Settings?
    
-   // access a shared instance
    class var sharedInstance: OAuth2 {
       struct Singleton {
          static let instance = OAuth2()
@@ -26,25 +28,30 @@ class OAuth2: NSObject {
       return Singleton.instance
    }
    
-}
-
-// MARK: Google OAuth2
-
-extension OAuth2 {
-   
-   func request(completed: (String?) -> Void) {
-      let scopes = ["https://www.googleapis.com/auth/youtube"]
-      let googleConfig = GoogleConfig(clientId: kGoogleClientId, scopes: scopes)
-      let oauth2Module = OAuth2Module(config: googleConfig)
-      let http = Http()
-      http.authzModule = oauth2Module
-      oauth2Module.requestAccess { (response:AnyObject?, error:NSError?) -> Void in
-         if let error = error {
-            print("Error: \(error)")
-            completed(nil)
-         } else {
-            completed(response as? String)
-         }
+   private var googleOauth2Settings: Oauth2Settings {
+      if _googleOauth2Settings == nil {
+         _googleOauth2Settings = Oauth2Settings(baseURL: Auth.BaseURL,
+                                                authorizeURL: Auth.AuthorizeURL,
+                                                tokenURL: Auth.TokenURL,
+                                                redirectURL: Auth.RedirectURL,
+                                                clientID: Private.GoogleClientID,
+                                                clientSecret: Auth.ClientSecret,
+                                                scope: Auth.Scope)
       }
+      return _googleOauth2Settings!
    }
+
+   func requestToken(_ completed: @escaping (String?) -> Void) {
+      UsingOauth2(googleOauth2Settings, performWithToken: { token in
+         completed(token)
+      }, errorHandler: {
+         print("Oauth2 failed")
+         completed(nil)
+      })
+   }
+   
+   func clearToken() {
+      Oauth2ClearTokensFromKeychain(googleOauth2Settings)
+   }
+   
 }

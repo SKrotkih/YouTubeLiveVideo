@@ -10,5 +10,5 @@ import Foundation
 import SwiftyJSON
 
 public protocol Decodable {
-  static func decode(json: JSON) -> Self
+  static func decode(_ json: JSON) -> Self
 }

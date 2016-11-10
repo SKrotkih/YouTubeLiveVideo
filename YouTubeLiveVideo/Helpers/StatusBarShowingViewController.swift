@@ -10,7 +10,7 @@ import UIKit
 
 class StatusBarShowingViewController: UIViewController {
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return false
     }
 

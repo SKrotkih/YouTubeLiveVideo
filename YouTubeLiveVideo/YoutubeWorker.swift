@@ -10,7 +10,7 @@ import UIKit
 
 class YoutubeWorker: NSObject {
 
-   private var youtubePlayerViewController: YoutubePlayerViewController?
+   fileprivate var youtubePlayerViewController: YoutubePlayerViewController?
    
    class var sharedInstance: YoutubeWorker {
       struct SingletonWrapper {
@@ -19,12 +19,12 @@ class YoutubeWorker: NSObject {
       return SingletonWrapper.sharedInstance;
    }
    
-   private override init() {
+   fileprivate override init() {
       
       super.init()
    }
    
-   func playYoutubeID(youtubeId: String, viewController: UIViewController) {
+   func playYoutubeID(_ youtubeId: String, viewController: UIViewController) {
       if self.youtubePlayerViewController == nil {
          self.youtubePlayerViewController = YoutubePlayerViewController()
          self.youtubePlayerViewController!.delegate = self
