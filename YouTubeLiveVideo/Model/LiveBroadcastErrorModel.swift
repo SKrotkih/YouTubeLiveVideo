@@ -1,6 +1,6 @@
 //
 //  LiveBroadcastErrorModel.swift
-//  YTLiveStreaming
+//  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/24/16.
 //  Copyright © 2016 Sergey Krotkih. All rights reserved.
@@ -42,7 +42,7 @@ public struct LiveBroadcastErrorModel {
 // MARK: - Decodable
 
 extension LiveBroadcastErrorModel: Decodable {
-   public static func decode(_ json: JSON) -> LiveBroadcastErrorModel {
+   public static func decode(json: JSON) -> LiveBroadcastErrorModel {
       let model = LiveBroadcastErrorModel(
          code: json["code"].intValue,
          message: json["message"].stringValue

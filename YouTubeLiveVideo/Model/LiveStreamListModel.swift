@@ -1,6 +1,6 @@
 //
 //  LiveStreamListModel.swift
-//  YTLiveStreaming
+//  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/24/16.
 //  Copyright © 2016 Sergey Krotkih. All rights reserved.
@@ -99,7 +99,7 @@ public struct LiveStreamListModel {
 // MARK: - Decodable
 
 extension LiveStreamListModel: Decodable {
-   public static func decode(_ json: JSON) -> LiveStreamListModel {
+   public static func decode(json: JSON) -> LiveStreamListModel {
       var items: [LiveStreamModel] = []
       if let content = json["items"].array {
          for item in content {
@@ -117,7 +117,7 @@ extension LiveStreamListModel: Decodable {
 }
 
 extension LiveStreamListModel.Item {
-   public static func decode(_ json: JSON) -> LiveStreamListModel.Item {
+   public static func decode(json: JSON) -> LiveStreamListModel.Item {
       let snippet = LiveStreamListModel.Snipped.decode(json["snippet"])
       let status = LiveStreamListModel.Status.decode(json["status"])
       let cdn = LiveStreamListModel.CDN.decode(json["cdn"])
@@ -134,7 +134,7 @@ extension LiveStreamListModel.Item {
 }
 
 extension LiveStreamListModel.IngestionInfo {
-   public static func decode(_ json: JSON) -> LiveStreamListModel.IngestionInfo {
+   public static func decode(json: JSON) -> LiveStreamListModel.IngestionInfo {
       let model = LiveStreamListModel.IngestionInfo (
          streamName: json["streamName"].stringValue,
          ingestionAddress: json["ingestionAddress"].stringValue,
@@ -145,7 +145,7 @@ extension LiveStreamListModel.IngestionInfo {
 }
 
 extension LiveStreamListModel.CDN {
-   public static func decode(_ json: JSON) -> LiveStreamListModel.CDN {
+   public static func decode(json: JSON) -> LiveStreamListModel.CDN {
       let ingestionInfo = LiveStreamListModel.IngestionInfo.decode(json["ingestionInfo"])
       let model = LiveStreamListModel.CDN (
          frameRate: json["frameRate"].stringValue,
@@ -159,7 +159,7 @@ extension LiveStreamListModel.CDN {
 }
 
 extension LiveStreamListModel.Snipped {
-   public static func decode(_ json: JSON) -> LiveStreamListModel.Snipped {
+   public static func decode(json: JSON) -> LiveStreamListModel.Snipped {
       let model = LiveStreamListModel.Snipped (
          title: json["title"].stringValue,
          channelId: json["channelId"].stringValue,
@@ -172,7 +172,7 @@ extension LiveStreamListModel.Snipped {
 }
 
 extension LiveStreamListModel.Status {
-   public static func decode(_ json: JSON) -> LiveStreamListModel.Status {
+   public static func decode(json: JSON) -> LiveStreamListModel.Status {
       let healthStatus = LiveStreamListModel.HealthStatus.decode(json["healthStatus"])
       let model = LiveStreamListModel.Status (
          healthStatus: healthStatus,
@@ -183,7 +183,7 @@ extension LiveStreamListModel.Status {
 }
 
 extension LiveStreamListModel.HealthStatus {
-   public static func decode(_ json: JSON) -> LiveStreamListModel.HealthStatus {
+   public static func decode(json: JSON) -> LiveStreamListModel.HealthStatus {
       let model = LiveStreamListModel.HealthStatus (
          status: json["status"].stringValue
       )

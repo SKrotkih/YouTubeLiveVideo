@@ -1,6 +1,6 @@
 //
 //  LiveStreamModel.swift
-//  YTLiveStreaming
+//  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/24/16.
 //  Copyright © 2016 Sergey Krotkih. All rights reserved.
@@ -99,7 +99,7 @@ public struct LiveStreamModel {
 // MARK: - Decodable
 
 extension LiveStreamModel: Decodable {
-   public static func decode(_ json: JSON) -> LiveStreamModel {
+   public static func decode(json: JSON) -> LiveStreamModel {
       
       let snippet = LiveStreamModel.Snipped.decode(json["snippet"])
       let cdn = LiveStreamModel.CDN.decode(json["cdn"])
@@ -118,7 +118,7 @@ extension LiveStreamModel: Decodable {
 }
 
 extension LiveStreamModel.Snipped {
-   public static func decode(_ json: JSON) -> LiveStreamModel.Snipped {
+   public static func decode(json: JSON) -> LiveStreamModel.Snipped {
       let model = LiveStreamModel.Snipped (
          publishedAt: json["publishedAt"].stringValue,
          channelId: json["channelId"].stringValue,
@@ -131,7 +131,7 @@ extension LiveStreamModel.Snipped {
 }
 
 extension LiveStreamModel.CDN {
-   public static func decode(_ json: JSON) -> LiveStreamModel.CDN {
+   public static func decode(json: JSON) -> LiveStreamModel.CDN {
       let ingestionInfo = LiveStreamModel.IngestionInfo.decode(json["ingestionInfo"])
       let model = LiveStreamModel.CDN (
          format: json["format"].stringValue,
@@ -145,7 +145,7 @@ extension LiveStreamModel.CDN {
 }
 
 extension LiveStreamModel.IngestionInfo {
-   public static func decode(_ json: JSON) -> LiveStreamModel.IngestionInfo {
+   public static func decode(json: JSON) -> LiveStreamModel.IngestionInfo {
       let model = LiveStreamModel.IngestionInfo (
          streamName: json["streamName"].stringValue,
          ingestionAddress: json["ingestionAddress"].stringValue,
@@ -156,7 +156,7 @@ extension LiveStreamModel.IngestionInfo {
 }
 
 extension LiveStreamModel.Status {
-   public static func decode(_ json: JSON) -> LiveStreamModel.Status {
+   public static func decode(json: JSON) -> LiveStreamModel.Status {
       let healthStatus = LiveStreamModel.HealthStatus.decode(json["healthStatus"])
       let model = LiveStreamModel.Status (
          streamStatus: json["streamStatus"].stringValue,
@@ -167,7 +167,7 @@ extension LiveStreamModel.Status {
 }
 
 extension LiveStreamModel.HealthStatus {
-   public static func decode(_ json: JSON) -> LiveStreamModel.HealthStatus {
+   public static func decode(json: JSON) -> LiveStreamModel.HealthStatus {
       let model = LiveStreamModel.HealthStatus (
          status: json["status"].stringValue
       )

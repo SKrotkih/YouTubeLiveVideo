@@ -4,22 +4,22 @@ import Result
 /// Provides each request with optional NSURLCredentials.
 public final class CredentialsPlugin: PluginType {
 
-    public typealias CredentialClosure = (TargetType) -> URLCredential?
+    public typealias CredentialClosure = TargetType -> NSURLCredential?
     let credentialsClosure: CredentialClosure
 
-    public init(credentialsClosure: @escaping CredentialClosure) {
+    public init(credentialsClosure: CredentialClosure) {
         self.credentialsClosure = credentialsClosure
     }
 
     // MARK: Plugin
 
-    public func willSendRequest(_ request: RequestType, target: TargetType) {
+    public func willSendRequest(request: RequestType, target: TargetType) {
         if let credentials = credentialsClosure(target) {
-            _ = request.authenticate(usingCredential: credentials)
+            request.authenticate(usingCredential: credentials)
         }
     }
 
-    public func didReceiveResponse(_ result: Result<Moya.Response, Moya.Error>, target: TargetType) {
+    public func didReceiveResponse(result: Result<Moya.Response, Moya.Error>, target: TargetType) {
 
     }
 }

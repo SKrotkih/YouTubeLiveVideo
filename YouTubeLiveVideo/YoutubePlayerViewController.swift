@@ -8,21 +8,21 @@ protocol YoutubePlayerDelegate {
 class YoutubePlayerViewController: UIViewController {
    var delegate: YoutubePlayerDelegate?
    var videoPlayerViewController: XCDYouTubeVideoPlayerViewController?
-   fileprivate var currentRotation = "P"
+   private var currentRotation = "P"
    
-   func playVideo(_ youtubeId: String, viewController: UIViewController) {
+   func playVideo(youtubeId: String, viewController: UIViewController) {
       self.videoPlayerViewController = XCDYouTubeVideoPlayerViewController(videoIdentifier: youtubeId)
-      NotificationCenter.default.addObserver(self, selector: #selector(YoutubePlayerViewController.moviePlayerPlaybackDidFinish(_:)),
-                                                       name: NSNotification.Name.MPMoviePlayerPlaybackDidFinish,
+      NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(YoutubePlayerViewController.moviePlayerPlaybackDidFinish(_:)),
+                                                       name: MPMoviePlayerPlaybackDidFinishNotification,
                                                        object: self.videoPlayerViewController!.moviePlayer)
-      viewController.present(self.videoPlayerViewController!, animated: true) {
+      viewController.presentViewController(self.videoPlayerViewController!, animated: true) {
       }
    }
    
-   func moviePlayerPlaybackDidFinish(_ notification: Notification) {
-      NotificationCenter.default.removeObserver(self, name: NSNotification.Name.MPMoviePlayerPlaybackDidFinish, object: nil)
-      if let finishReason: MPMovieFinishReason = (notification.userInfo![MPMoviePlayerPlaybackDidFinishReasonUserInfoKey]! as AnyObject).int32Value as? MPMovieFinishReason {
-         if finishReason == .playbackError {
+   func moviePlayerPlaybackDidFinish(notification: NSNotification) {
+      NSNotificationCenter.defaultCenter().removeObserver(self, name: MPMoviePlayerPlaybackDidFinishNotification, object: nil)
+      if let finishReason: MPMovieFinishReason = notification.userInfo![MPMoviePlayerPlaybackDidFinishReasonUserInfoKey]!.intValue as? MPMovieFinishReason {
+         if finishReason == .PlaybackError {
             let error = notification.userInfo![XCDMoviePlayerPlaybackDidFinishErrorUserInfoKey]
             print(error)
          }
@@ -30,8 +30,8 @@ class YoutubePlayerViewController: UIViewController {
       delegate?.playerDidFinish()
    }
    
-   func thumbnail(_ youtubeId: String) -> UIImage {
-      let imageData = try? Data(contentsOf: URL(string: "https://www.youtube.com/watch?v=\(youtubeId).jpg")!)
+   func thumbnail(youtubeId: String) -> UIImage {
+      let imageData = NSData(contentsOfURL: NSURL(string: "https://www.youtube.com/watch?v=\(youtubeId).jpg")!)
       return UIImage(data: imageData!)!
    }
 }

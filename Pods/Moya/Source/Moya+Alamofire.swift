@@ -1,27 +1,17 @@
 import Foundation
 import Alamofire
 
-public typealias Manager = Alamofire.SessionManager
+public typealias Manager = Alamofire.Manager
 internal typealias Request = Alamofire.Request
-internal typealias DownloadRequest = Alamofire.DownloadRequest
-internal typealias UploadRequest = Alamofire.UploadRequest
-internal typealias DataRequest = Alamofire.DataRequest
-internal typealias StreamRequest = Alamofire.StreamRequest
-
-internal typealias URLRequestConvertible = Alamofire.URLRequestConvertible
 
 /// Choice of parameter encoding.
 public typealias ParameterEncoding = Alamofire.ParameterEncoding
-public typealias JSONEncoding = Alamofire.JSONEncoding
-public typealias URLEncoding = Alamofire.URLEncoding
-public typealias PropertyListEncoding = Alamofire.PropertyListEncoding
 
 /// Multipart form
 public typealias RequestMultipartFormData = Alamofire.MultipartFormData
 
 /// Multipart form data encoding result.
-public typealias MultipartFormDataEncodingResult = Manager.MultipartFormDataEncodingResult
-public typealias DownloadDestination = Alamofire.DownloadRequest.DownloadFileDestination
+public typealias MultipartFormDataEncodingResult = Alamofire.Manager.MultipartFormDataEncodingResult
 
 /// Make the Alamofire Request type conform to our type, to prevent leaking Alamofire to plugins.
 extension Request: RequestType { }
@@ -30,19 +20,19 @@ extension Request: RequestType { }
 internal final class CancellableToken: Cancellable, CustomDebugStringConvertible {
     let cancelAction: () -> Void
     let request: Request?
-    fileprivate(set) var cancelled: Bool = false
+    private(set) var cancelled: Bool = false
 
-    fileprivate var lock: DispatchSemaphore = DispatchSemaphore(value: 1)
+    private var lock: dispatch_semaphore_t = dispatch_semaphore_create(1)
 
     func cancel() {
-        _ = lock.wait(timeout: DispatchTime.distantFuture)
-        defer { lock.signal() }
+        dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER)
+        defer { dispatch_semaphore_signal(lock) }
         guard !cancelled else { return }
         cancelled = true
         cancelAction()
     }
 
-    init(action: @escaping () -> Void) {
+    init(action: () -> Void) {
         self.cancelAction = action
         self.request = nil
     }
