@@ -1,6 +1,6 @@
 //
 //  LiveStreamingAPI.swift
-//  YouTubeLiveVideo
+//  YTLiveStreaming
 //
 //  Created by Sergey Krotkih on 10/28/16.
 //  Copyright © 2016 Sergey Krotkih. All rights reserved.
@@ -23,7 +23,7 @@ private func JSONResponseDataFormatter(_ data: Data) -> Data {
 let BaseURL = "https://www.googleapis.com/youtube/v3"
 
 let requestClosure = { (endpoint: Moya.Endpoint<LiveStreamingAPI>, done: @escaping MoyaProvider<LiveStreamingAPI>.RequestResultClosure) in
-   OAuth2.sharedInstance.requestToken() { token in
+   GoogleOAuth2.sharedInstance.requestToken() { token in
       if let token = token {
          var request = endpoint.urlRequest as URLRequest
          request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

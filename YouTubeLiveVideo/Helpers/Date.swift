@@ -1,11 +1,3 @@
-//
-//  Date.swift
-//  FightNights
-//
-//  Created by Sergey Krotkih on 10/2/16.
-//  Copyright © 2016 VibrantFire. All rights reserved.
-//
-
 import UIKit
 
 extension Date {

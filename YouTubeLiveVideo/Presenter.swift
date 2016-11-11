@@ -1,5 +1,5 @@
 //
-//  YouTubeLiveStreamingPresenter.swift
+//  Presenter.swift
 //  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/24/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class YouTubeLiveStreamingPresenter: NSObject {
+class Presenter: NSObject {
    
    fileprivate var timer: Timer?
    fileprivate var livestreamId: String?
@@ -18,7 +18,7 @@ class YouTubeLiveStreamingPresenter: NSObject {
    
    fileprivate var isLiveVideo: Bool = false
    
-   var youTubeRequest: LiveStreamingRequest!
+   var liveStreaming: YTLiveStreaming!
    var viewController: UIViewController!
 
    fileprivate var liveViewController: LFLiveViewController!
@@ -27,7 +27,7 @@ class YouTubeLiveStreamingPresenter: NSObject {
 
 // MARK: Live stream publishing
 
-extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
+extension Presenter: VideoStreamViewControllerDelegate {
    
    func showVideoStreamViewController(_ liveStream: LiveStreamModel, liveBroadcast: LiveBroadcastStreamModel, completed: @escaping () -> Void) {
       self.liveBroadcast = liveBroadcast
@@ -77,9 +77,8 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
       stopChekingStreamStatusTimer()
       
       if let broadcast = broadcast {
-         // complete – The broadcast is over. YouTube stops transmitting video.
-         youTubeRequest.transitionLiveBroadcast(broadcast.id, broadcastStatus: "complete", completed: { liveBroadcast in
-            if let _ = liveBroadcast {
+         liveStreaming.completeBroadcast(broadcast, completed: { success in
+            if success {
                print("Broadcast completed!")
             }
             self.dismissVideoStreamViewController()
@@ -96,7 +95,7 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
       if broadcast == nil {
          self.dismissVideoStreamViewController()
       } else if let liveBroadcast = self.liveBroadcast {
-         youTubeRequest.deleteLiveBroadcast(broadcastId: liveBroadcast.id, completed: { success in
+         liveStreaming.deleteBroadcast(id: liveBroadcast.id, completed: { success in
             if success {
                print("Broadcast \"\(liveBroadcast.id)\" was deleted!")
             } else {
@@ -130,82 +129,38 @@ extension YouTubeLiveStreamingPresenter: VideoStreamViewControllerDelegate {
          return
       }
       
-      youTubeRequest.getLiveBroadcast(broadcastId: liveBroadcast.id, completed: { broadcast in
-         if let broadcast = broadcast {
-            let broadcastStatus = broadcast.status.lifeCycleStatus
-            
-//            Valid values for this property are:
-//            abandoned – This broadcast was never started.
-//            complete – The broadcast is finished.
-//            created – The broadcast has incomplete settings, so it is not ready to transition to a live or testing status, but it has been created and is otherwise valid.
-//            live – The broadcast is active.
-//            liveStarting – The broadcast is in the process of transitioning to live status.
-//            ready – The broadcast settings are complete and the broadcast can transition to a live or testing status.
-//            reclaimed – This broadcast has been reclaimed.
-//            revoked – This broadcast was removed by an admin action.
-//            testStarting – The broadcast is in the process of transitioning to testing status.
-//            testing – The broadcast is only visible to the partner.
+      self.liveStreaming.getStatusBroadcast(liveBroadcast, stream: liveStream, completed: { (broadcastStatus, streamStatus, healthStatus) in
+         if let broadcastStatus = broadcastStatus, let streamStatus = streamStatus, let healthStatus = healthStatus {
 
-            self.youTubeRequest.getLiveStream(liveStream.id, completed: { liveStream in
-               if let liveStream = liveStream {
-                  //            Valid values for this property are:
-                  //            active – The stream is in active state which means the user is receiving data via the stream.
-                  //            created – The stream has been created but does not have valid CDN settings.
-                  //            error – An error condition exists on the stream.
-                  //            inactive – The stream is in inactive state which means the user is not receiving data via the stream.
-                  //            ready – The stream has valid CDN settings.
-                  let status = liveStream.status.streamStatus
-                  
-                  //            Valid values for this property are:
-                  //            good – There are no configuration issues for which the severity is warning or worse.
-                  //            ok – There are no configuration issues for which the severity is error.
-                  //            bad – The stream has some issues for which the severity is error.
-                  //            noData – YouTube's live streaming backend servers do not have any information about the stream's health status.
-                  let healthStatus = liveStream.status.healthStatus.status
-                  
-                  if broadcastStatus == "live" || broadcastStatus == "liveStarting" {
-                     self.liveViewController.showCurrentStatus(currStatus: "● LIVE   ")
+            if broadcastStatus == "live" || broadcastStatus == "liveStarting" {
+               self.liveViewController.showCurrentStatus(currStatus: "● LIVE   ")
+            } else {
+               let text = "status: \(broadcastStatus) [\(streamStatus);\(healthStatus)]"
+               
+               if text == "active" {
+                  print("active")
+               }
+               
+               self.liveViewController.showCurrentStatus(currStatus: text)
+               
+               self.liveStreaming.transitionBroadcast(liveBroadcast, toStatus: "live", completed: { success in
+                  if success {
+                     print("Transition to the LIVE status was made successfully")
+                     self.isLiveVideo = true
                   } else {
-                     let text = "status: \(broadcastStatus) [\(status);\(healthStatus)]"
-                     
-                     if text == "active" {
-                        print("active")
-                     }
-                     
-                     self.liveViewController.showCurrentStatus(currStatus: text)
-                     self.transitionBroadcastToStatus("live", completed: { inLive in
-                        if inLive {
-                           print("Transition to the LIVE status was made successfully")
-                           self.isLiveVideo = true
-                        } else {
-                           print("Failed transition to the LIVE status!")
-                           self.isLiveVideo = false
-                           self.transitionBroadcastToStatus("testing", completed: { inTesting in
-                           })
+                     print("Failed transition to the LIVE status!")
+                     self.isLiveVideo = false
+                     self.liveStreaming.transitionBroadcast(liveBroadcast, toStatus: "testing", completed: { success in
+                        if success {
+                           print("We in the testing status!")
                         }
                      })
                   }
-               }
-            })
+               })
+            }
+            
          }
       })
    }
 
-   fileprivate func transitionBroadcastToStatus(_ status: String, completed: @escaping (Bool) -> Void) {
-      if let liveBroadcast = self.liveBroadcast {
-         // complete – The broadcast is over. YouTube stops transmitting video.
-         // live – The broadcast is visible to its audience. YouTube transmits video to the broadcast's monitor stream and its broadcast stream.
-         // testing – Start testing the broadcast. YouTube transmits video to the broadcast's monitor stream.
-         youTubeRequest.transitionLiveBroadcast(liveBroadcast.id, broadcastStatus: status, completed: { liveBroadcast in
-            if let _ = liveBroadcast {
-               completed(true)
-               print("Our broadcast in the LIVE status!")
-            } else {
-               completed(false)
-            }
-         })
-      } else {
-         completed(false)
-      }
-   }
 }

@@ -1,11 +1,3 @@
-//
-//  String.swift
-//  FightNights
-//
-//  Created by mac on 16/06/16.
-//  Copyright © 2016 VibrantFire. All rights reserved.
-//
-
 import Foundation
 
 public extension String {

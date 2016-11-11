@@ -35,7 +35,7 @@ extension YTLiveRequest {
    // completed – Return broadcasts that have already ended.
    // upcoming – Return broadcasts that have not yet started.
    
-   func listBroadcasts(_ status: String, completed: @escaping (LiveBroadcastListModel?) -> Void) {
+   class func listBroadcasts(_ status: String, completed: @escaping (LiveBroadcastListModel?) -> Void) {
       let parameters: [String: AnyObject] = [
          "part": "id,snippet,contentDetails,status" as AnyObject,
          "broadcastStatus": status as AnyObject,
@@ -74,7 +74,7 @@ extension YTLiveRequest {
       })
    }
    
-   func getLiveBroadcast(broadcastId: String, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
+   class func getLiveBroadcast(broadcastId: String, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
       let parameters: [String: AnyObject] = [
          "part":"id,snippet,contentDetails,status" as AnyObject,
          "id":broadcastId as AnyObject,
@@ -113,7 +113,7 @@ extension YTLiveRequest {
    
    // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts/insert
    // Creates a broadcast.
-   func createLiveBroadcast(_ title: String, startDateTime: Date, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
+   class func createLiveBroadcast(_ title: String, startDateTime: Date, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
       GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let headers = merge(one: ["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])
@@ -157,7 +157,7 @@ extension YTLiveRequest {
    
    // POST https://www.googleapis.com/youtube/v3/liveBroadcasts/transition
    // Changes the status of a YouTube live broadcast and initiates any processes associated with the new status. For example, when you transition a broadcast's status to testing, YouTube starts to transmit video to that broadcast's monitor stream. Before calling this method, you should confirm that the value of the status.streamStatus property for the stream bound to your broadcast is active.
-   func transitionLiveBroadcast(_ boadcastId: String, broadcastStatus: String, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
+   class func transitionLiveBroadcast(_ boadcastId: String, broadcastStatus: String, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
       
       let parameters: [String: AnyObject] = [
          "id":boadcastId as AnyObject,
@@ -191,7 +191,7 @@ extension YTLiveRequest {
    
    // Deletes a broadcast.
    // DELETE https://www.googleapis.com/youtube/v3/liveBroadcasts
-   func deleteLiveBroadcast(broadcastId: String, completed: @escaping (Bool) -> Void) {
+   class func deleteLiveBroadcast(broadcastId: String, completed: @escaping (Bool) -> Void) {
       let parameters: [String: AnyObject] = [
          "id":broadcastId as AnyObject,
          "key": Private.APIkey as AnyObject
@@ -220,7 +220,7 @@ extension YTLiveRequest {
    // Binds a YouTube broadcast to a stream or removes an existing binding between a broadcast and a stream.
    // A broadcast can only be bound to one video stream, though a video stream may be bound to more than one broadcast.
    // POST https://www.googleapis.com/youtube/v3/liveBroadcasts/bind
-   func bindLiveBroadcast(broadcastId: String, liveStreamId streamId: String, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
+   class func bindLiveBroadcast(broadcastId: String, liveStreamId streamId: String, completed: @escaping (LiveBroadcastStreamModel?) -> Void) {
       let parameters: [String: AnyObject] = [
          "id":broadcastId as AnyObject,
          "streamId":streamId as AnyObject,
@@ -253,7 +253,7 @@ extension YTLiveRequest {
    // Updates a broadcast. For example, you could modify the broadcast settings defined in the liveBroadcast resource's contentDetails object.
    // https://developers.google.com/youtube/v3/live/docs/liveBroadcasts/update
    // PUT https://www.googleapis.com/youtube/v3/liveBroadcasts
-   func updateLiveBroadcast(broadcastId id: String, title: String, format: String, completed: @escaping (Bool) -> Void) {
+   class func updateLiveBroadcast(broadcastId id: String, title: String, format: String, completed: @escaping (Bool) -> Void) {
       GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let ingestionType = "rtmp" // dash rtmp
@@ -303,7 +303,7 @@ extension YTLiveRequest {
    
    // Returns a list of video streams that match the API request parameters.
    // https://developers.google.com/youtube/v3/live/docs/liveStreams/list
-   func getLiveStream(_ liveStreamId: String, completed: @escaping (LiveStreamModel?) -> Void) {
+   class func getLiveStream(_ liveStreamId: String, completed: @escaping (LiveStreamModel?) -> Void) {
       let parameters: [String: AnyObject] = [
          "part":"id,snippet,cdn,status" as AnyObject,
          "id":liveStreamId as AnyObject,
@@ -362,7 +362,7 @@ extension YTLiveRequest {
    //   }
    //   }
    
-   func createLiveStream(_ title: String, description: String, streamName: String, completed: @escaping (LiveStreamModel?) -> Void) {
+   class func createLiveStream(_ title: String, description: String, streamName: String, completed: @escaping (LiveStreamModel?) -> Void) {
       GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let resolution = LiveAPI.Resolution
@@ -409,7 +409,7 @@ extension YTLiveRequest {
    // Deletes a video stream
    // Request:
    // DELETE https://www.googleapis.com/youtube/v3/liveStreams
-   func deleteLiveStream(_ liveStreamId: String, completed: @escaping (Bool) -> Void) {
+   class func deleteLiveStream(_ liveStreamId: String, completed: @escaping (Bool) -> Void) {
       let parameters: [String: AnyObject] = [
          "id":liveStreamId as AnyObject,
          "key": Private.APIkey as AnyObject
@@ -442,7 +442,7 @@ extension YTLiveRequest {
    // format = 1080p 1440p 240p 360p 480p 720p
    // ingestionType = dash rtmp
    
-   func updateLiveStream(_ liveStreamId: String, title: String, format: String, ingestionType: String, completed: @escaping (Bool) -> Void) {
+   class func updateLiveStream(_ liveStreamId: String, title: String, format: String, ingestionType: String, completed: @escaping (Bool) -> Void) {
       GoogleOAuth2.sharedInstance.requestToken() { token in
          if let token = token {
             let headers = merge(one: ["Content-Type": "application/json"], ["Authorization":"Bearer \(token)"])

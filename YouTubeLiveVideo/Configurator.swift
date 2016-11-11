@@ -1,5 +1,5 @@
 //
-//  YouTubeConfigurator.swift
+//  Configurator.swift
 //  YouTubeLiveVideo
 //
 //  Created by Sergey Krotkih on 10/24/16.
@@ -8,20 +8,18 @@
 
 import UIKit
 
-class YouTubeConfigurator: NSObject {
+class Configurator: NSObject {
    
    func configure(_ viewController: ViewController) {
       
       let worker = YTLiveStreaming()
-      let requests = LiveStreamingRequest()
       let presenter = Presenter()
       
       viewController.input = worker
+      viewController.presenter = presenter
       
-      worker.youTubeRequest = requests
-      
-      presenter.youTubeRequest = requests
       presenter.viewController = viewController
+      presenter.liveStreaming = worker
    }
 }
 
