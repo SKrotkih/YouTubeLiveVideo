@@ -1,11 +1,15 @@
 # YouTubeLiveVideo
 
+[![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg?style=flat)](https://swift.org/)
+
 This is a sample of using YouTube Live Streaming API (v.3) in Swift 2.2. 
 
 ## Requirements
 
 - Xcode 7.3.1
 - Swift 2.2
+
+Here you can find my framework for Xcode 8 and Swift 3: https://github.com/SKrotkih/YTLiveStreaming
 
 ## Install
 
@@ -19,7 +23,7 @@ Just one note. When you will create an API key, don't point the iOS apps in the 
 
 Download or clone the repository.
 
-As you can see I made pod install for you. It is because I had some problems with updating some frameworks (for SwiftyJSON for example). There is now just for Swift above 2.2. So I decided to commit all frameworks for you for having a quick start. After update all frameworks (if you want) you can restore framework SwiftyJSON from the source YouTubeLiveVideo repo.
+As you can see I exclude Pods from .gitignore. It is because I had some problems with updating some frameworks (for SwiftyJSON for example). There is now just for Swift above 2.2. So I decided to commit all frameworks for you for having a quick start.
 
 - replace API key and Client Id in YouTubeLiveStreamingRequest.swift
 - replace bundle identifier 
@@ -36,4 +40,4 @@ As you can see I made pod install for you. It is because I had some problems wit
 
 Here is a video how it works: https://youtu.be/HwYbvUU2fJo
 
-25-10-2016
+10-25-2016
